@@ -102,7 +102,7 @@ class SalidaRepository {
 
 
     // ==========================
-    // CONTAR SALIDAS DE BAÑO
+    // CONTAR SALIDAS
     // DEL ESTUDIANTE DURANTE HOY
     // ==========================
 
@@ -128,8 +128,13 @@ class SalidaRepository {
 
                 AND motivo_id = $2
 
-                AND hora_salida::date =
-                    CURRENT_DATE
+                AND (
+                    hora_salida
+                    AT TIME ZONE 'America/Lima'
+                )::date = (
+                    NOW()
+                    AT TIME ZONE 'America/Lima'
+                )::date
 
             `,
 
@@ -300,13 +305,20 @@ class SalidaRepository {
                 INNER JOIN usuarios u
                     ON u.id = s.usuario_id
 
-                WHERE s.hora_salida::date =
-                      CURRENT_DATE
+                WHERE
+                    (
+                        s.hora_salida
+                        AT TIME ZONE 'America/Lima'
+                    )::date = (
+                        NOW()
+                        AT TIME ZONE 'America/Lima'
+                    )::date
 
                 ORDER BY
 
                     CASE
-                        WHEN s.estado = 'ACTIVA' THEN 0
+                        WHEN s.estado = 'ACTIVA'
+                        THEN 0
                         ELSE 1
                     END,
 
@@ -371,15 +383,23 @@ class SalidaRepository {
                 INNER JOIN usuarios u
                     ON u.id = s.usuario_id
 
-                WHERE e.ambiente_id = $1
+                WHERE
 
-                AND s.hora_salida::date =
-                    CURRENT_DATE
+                    e.ambiente_id = $1
+
+                    AND (
+                        s.hora_salida
+                        AT TIME ZONE 'America/Lima'
+                    )::date = (
+                        NOW()
+                        AT TIME ZONE 'America/Lima'
+                    )::date
 
                 ORDER BY
 
                     CASE
-                        WHEN s.estado = 'ACTIVA' THEN 0
+                        WHEN s.estado = 'ACTIVA'
+                        THEN 0
                         ELSE 1
                     END,
 
