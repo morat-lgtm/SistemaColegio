@@ -1,118 +1,104 @@
 const boton =
-document.getElementById("btnIngresar");
+    document.getElementById("btnIngresar");
 
 
+boton.onclick = async () => {
 
-boton.onclick = async()=>{
+    const usuario =
+        document.getElementById("usuario").value.trim();
 
+    const password =
+        document.getElementById("password").value;
 
 
-const usuario =
-document.getElementById("usuario").value;
+    const mensaje =
+        document.getElementById("mensaje");
 
 
+    if (!usuario || !password) {
 
-const password =
-document.getElementById("password").value;
+        mensaje.textContent =
+            "Debe ingresar usuario y contraseña.";
 
+        return;
 
+    }
 
 
+    try {
 
-const respuesta =
-await fetch(
+        const respuesta =
+            await fetch(
+                "/api/auth/login",
+                {
+                    method: "POST",
 
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
-API_URL + "/api/auth/login",
+                    body: JSON.stringify({
+                        usuario,
+                        password
+                    })
+                }
+            );
 
 
-{
+        const resultado =
+            await respuesta.json();
 
 
-method:"POST",
+        if (resultado.success) {
 
+            // Guardar usuario conectado
 
-headers:{
+            localStorage.setItem(
+                "usuario",
+                JSON.stringify(
+                    resultado.user
+                )
+            );
 
 
-"Content-Type":"application/json"
+            // Guardar sesión
 
+            if (resultado.sessionId) {
 
-},
+                localStorage.setItem(
+                    "sessionId",
+                    resultado.sessionId
+                );
 
+            }
 
-body:JSON.stringify({
 
+            // Ir al menú principal
 
-usuario,
+            window.location.href =
+                "principal.html";
 
 
-password
+        } else {
 
+            mensaje.textContent =
+                resultado.message ||
+                "No se pudo iniciar sesión.";
 
-})
+        }
 
 
-}
+    } catch (error) {
 
+        console.error(
+            "ERROR LOGIN:",
+            error
+        );
 
-);
 
+        mensaje.textContent =
+            "No se pudo conectar con el servidor.";
 
-
-
-
-
-const resultado =
-await respuesta.json();
-
-
-
-
-
-
-
-if(resultado.success){
-
-
-
-// Guardar usuario conectado
-
-localStorage.setItem(
-
-    "usuario",
-
-    JSON.stringify(
-        resultado.user
-    )
-
-);
-
-
-
-
-
-// Ir al menú principal
-
-window.location.href =
-"principal.html";
-
-
-
-
-
-}else{
-
-
-
-document.getElementById("mensaje")
-.textContent =
-resultado.message;
-
-
-
-}
-
-
+    }
 
 };
