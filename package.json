@@ -1,0 +1,40 @@
+{
+  "name": "sgce-servidor",
+  "version": "1.0.0",
+  "description": "Servidor SGCE Sistema de Gestión Escolar",
+  "main": "server.js",
+  "bin": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "pkg": {
+    "scripts": [
+      "server.js",
+      "routes/*.js",
+      "controllers/*.js",
+      "services/*.js",
+      "repositories/*.js",
+      "database/*.js",
+      "helpers/*.js",
+      "node_modules/sqlite3/lib/**/*.js"
+    ],
+    "assets": [
+      "database/*.db",
+      "node_modules/sqlite3/**/*"
+    ],
+    "targets": [
+      "node18-win-x64"
+    ],
+    "outputPath": "dist"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "multer": "^2.2.0",
+    "pg": "^8.23.0",
+    "sqlite3": "^6.0.1",
+    "xlsx": "^0.18.5"
+  }
+}

@@ -1,0 +1,6 @@
+node_modules/
+.env
+colegio.db
+dist/
+server.exe
+uploads/

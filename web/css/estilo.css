@@ -1,0 +1,120 @@
+/* ==========================
+   HISTORIAL SGCE
+========================== */
+
+
+.historial-card{
+
+
+    background:white;
+
+
+    border-radius:15px;
+
+
+    padding:18px;
+
+
+    margin-bottom:18px;
+
+
+    box-shadow:
+    0 4px 12px rgba(0,0,0,0.15);
+
+
+    border-left:10px solid #999;
+
+
+}
+
+
+
+.estado-activa{
+
+
+    border-left-color:red;
+
+
+}
+
+
+
+.estado-retornado{
+
+
+    border-left-color:green;
+
+
+}
+
+
+
+
+.estado{
+
+
+    margin-top:12px;
+
+
+    padding:10px;
+
+
+    border-radius:10px;
+
+
+    font-weight:bold;
+
+
+    text-align:center;
+
+
+}
+
+
+
+
+.estado-activa .estado{
+
+
+    background:#ffdada;
+
+
+    color:#b00000;
+
+
+}
+
+
+
+
+.estado-retornado .estado{
+
+
+    background:#d9ffd9;
+
+
+    color:#006600;
+
+
+}
+
+
+
+
+
+.historial-vacio{
+
+
+    background:white;
+
+
+    padding:25px;
+
+
+    border-radius:15px;
+
+
+    text-align:center;
+
+
+}
