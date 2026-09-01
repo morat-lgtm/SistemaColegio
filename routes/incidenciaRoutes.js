@@ -1,10 +1,10 @@
 const express = require("express");
 
 const incidenciaController =
-require("../controllers/incidenciaController");
+    require("../controllers/incidenciaController");
 
 const sessionManager =
-require("../helpers/sessionManager");
+    require("../helpers/sessionManager");
 
 
 const router = express.Router();
@@ -19,46 +19,37 @@ console.log("✔ Ruta incidenciaRoutes cargada.");
 
 router.get(
 
-"/tipos",
+    "/tipos",
 
-async(req,res)=>{
+    async (req, res) => {
 
+        try {
 
-    try{
-
-
-        const resultado =
-
-        await incidenciaController
-        .getTiposIncidencia();
+            const resultado =
+                await incidenciaController
+                    .getTiposIncidencia();
 
 
-        res.json(
-
-            resultado
-
-        );
+            res.json(
+                resultado
+            );
 
 
-    }catch(error){
+        } catch (error) {
 
+            console.error(error);
 
-        console.error(error);
+            res.status(500).json({
 
+                error: error.message
 
-        res.status(500).json({
+            });
 
-            error:error.message
-
-        });
-
+        }
 
     }
 
-
-});
-
-
+);
 
 
 // ==========================
@@ -67,195 +58,211 @@ async(req,res)=>{
 
 router.post(
 
-"/",
+    "/",
 
-async(req,res)=>{
+    async (req, res) => {
 
+        try {
 
-    try{
+            const {
 
+                sessionId,
 
-        const {
+                estudiante_id,
 
-            sessionId,
+                tipo_id,
 
-            estudiante_id,
+                descripcion,
 
-            tipo_id,
+                workstation_id
 
-            descripcion
+            } = req.body;
 
-        } = req.body;
 
+            // ==========================
+            // VALIDAR SESIÓN
+            // ==========================
 
+            if (!sessionId) {
 
-        // ==========================
-        // VALIDAR SESIÓN
-        // ==========================
+                return res.status(401).json({
 
-        if(!sessionId){
+                    success: false,
 
+                    error:
+                        "Sesión no encontrada."
 
-            return res.status(401).json({
-
-                success:false,
-
-                error:
-                "Sesión no encontrada."
-
-            });
-
-
-        }
-
-
-
-        const sesion =
-
-        sessionManager.get(
-
-            sessionId
-
-        );
-
-
-
-        if(!sesion){
-
-
-            return res.status(401).json({
-
-                success:false,
-
-                error:
-                "La sesión no es válida o ha expirado."
-
-            });
-
-
-        }
-
-
-
-        // ==========================
-        // CONSTRUIR INCIDENCIA
-        // ==========================
-
-        const incidencia = {
-
-
-            estudiante_id:
-
-            estudiante_id,
-
-
-            tipo_id:
-
-            tipo_id,
-
-
-            descripcion:
-
-            descripcion,
-
-
-            // USUARIO REAL DE LA SESIÓN
-
-            usuario_id:
-
-            sesion.id,
-
-
-            // COMPUTADORA ASOCIADA
-            // A LA SESIÓN
-
-            workstation_id:
-
-            sesion.workstation?.id || null
-
-
-        };
-
-
-
-        // ==========================
-        // MOSTRAR INFORMACIÓN
-        // EN CONSOLA
-        // ==========================
-
-        console.log(
-
-            "REGISTRANDO INCIDENCIA:",
-
-            {
-
-                usuario_id:
-                incidencia.usuario_id,
-
-                nombre:
-                sesion.nombre,
-
-                workstation_id:
-                incidencia.workstation_id
+                });
 
             }
 
-        );
+
+            const sesion =
+                sessionManager.get(
+                    sessionId
+                );
 
 
+            if (!sesion) {
 
-        // ==========================
-        // REGISTRAR
-        // ==========================
+                return res.status(401).json({
 
-        const resultado =
+                    success: false,
 
-        await incidenciaController
-        .registrarIncidencia(
+                    error:
+                        "La sesión no es válida o ha expirado."
 
-            incidencia
+                });
 
-        );
-
+            }
 
 
-        res.json({
+            // ==========================
+            // DETERMINAR WORKSTATION
+            // ==========================
+            //
+            // En Electron puede venir
+            // asociada a la sesión.
+            //
+            // En navegador llega desde
+            // /api/workstation.
+            //
+            // Incidencias NO utiliza
+            // ambiente_id para filtrar
+            // estudiantes.
+            // ==========================
 
-            success:true,
-
-            resultado
-
-        });
-
-
-    }catch(error){
+            const workstationFinal =
+                workstation_id ||
+                sesion.workstation?.id ||
+                null;
 
 
-        console.error(
+            // ==========================
+            // VALIDAR WORKSTATION
+            // ==========================
 
-            "Error registrando incidencia:",
+            if (!workstationFinal) {
 
-            error
+                return res.status(400).json({
 
-        );
+                    success: false,
+
+                    error:
+                        "No se pudo determinar la computadora desde donde se registra la incidencia."
+
+                });
+
+            }
 
 
-        res.status(500).json({
+            // ==========================
+            // CONSTRUIR INCIDENCIA
+            // ==========================
 
-            success:false,
+            const incidencia = {
 
-            error:
-            error.message
+                estudiante_id:
+                    estudiante_id,
 
-        });
+                tipo_id:
+                    tipo_id,
 
+                descripcion:
+                    descripcion,
+
+                // USUARIO REAL DE LA SESIÓN
+                usuario_id:
+                    sesion.id,
+
+                // COMPUTADORA DESDE DONDE
+                // SE REGISTRA LA INCIDENCIA
+                workstation_id:
+                    workstationFinal
+
+            };
+
+
+            // ==========================
+            // MOSTRAR INFORMACIÓN
+            // EN CONSOLA
+            // ==========================
+
+            console.log(
+
+                "REGISTRANDO INCIDENCIA:",
+
+                {
+
+                    usuario_id:
+                        incidencia.usuario_id,
+
+                    nombre:
+                        sesion.nombre,
+
+                    workstation_id:
+                        incidencia.workstation_id,
+
+                    estudiante_id:
+                        incidencia.estudiante_id,
+
+                    tipo_id:
+                        incidencia.tipo_id
+
+                }
+
+            );
+
+
+            // ==========================
+            // REGISTRAR
+            // ==========================
+
+            const resultado =
+                await incidenciaController
+                    .registrarIncidencia(
+                        incidencia
+                    );
+
+
+            // ==========================
+            // RESPUESTA
+            // ==========================
+
+            res.json({
+
+                success: true,
+
+                resultado
+
+            });
+
+
+        } catch (error) {
+
+            console.error(
+
+                "Error registrando incidencia:",
+
+                error
+
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                error:
+                    error.message
+
+            });
+
+        }
 
     }
 
-
-});
-
-
+);
 
 
 // ==========================
@@ -265,46 +272,39 @@ async(req,res)=>{
 
 router.get(
 
-"/hoy",
+    "/hoy",
 
-async(req,res)=>{
+    async (req, res) => {
 
+        try {
 
-    try{
-
-
-        const resultado =
-
-        await incidenciaController
-        .getIncidenciasHoy();
+            const resultado =
+                await incidenciaController
+                    .getIncidenciasHoy();
 
 
-        res.json(
-
-            resultado
-
-        );
+            res.json(
+                resultado
+            );
 
 
-    }catch(error){
+        } catch (error) {
+
+            console.error(error);
 
 
-        console.error(error);
+            res.status(500).json({
 
+                error:
+                    error.message
 
-        res.status(500).json({
+            });
 
-            error:error.message
-
-        });
-
+        }
 
     }
 
-
-});
-
-
+);
 
 
 // ==========================
@@ -313,50 +313,47 @@ async(req,res)=>{
 
 router.get(
 
-"/estudiante/:id",
+    "/estudiante/:id",
 
-async(req,res)=>{
+    async (req, res) => {
 
+        try {
 
-    try{
+            const resultado =
+                await incidenciaController
+                    .getIncidenciasByEstudiante(
 
+                        req.params.id
 
-        const resultado =
-
-        await incidenciaController
-        .getIncidenciasByEstudiante(
-
-            req.params.id
-
-        );
+                    );
 
 
-        res.json(
-
-            resultado
-
-        );
+            res.json(
+                resultado
+            );
 
 
-    }catch(error){
+        } catch (error) {
+
+            console.error(error);
 
 
-        console.error(error);
+            res.status(500).json({
 
+                error:
+                    error.message
 
-        res.status(500).json({
+            });
 
-            error:error.message
-
-        });
-
+        }
 
     }
 
-
-});
-
+);
 
 
+// ==========================
+// EXPORTAR
+// ==========================
 
 module.exports = router;

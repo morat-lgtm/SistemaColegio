@@ -33,7 +33,9 @@ const salidaController =
 
 const motivoSalidaController =
     require("../controllers/motivoSalidaController");
-
+const incidenciaController =
+    require("../controllers/incidenciaController");
+    
 const mensajeController =
     require("../controllers/mensajeController");
 
@@ -821,7 +823,40 @@ ipcMain.handle(
 );
 
 
+// ======================================================
+// INCIDENCIAS
+// ======================================================
 
+
+// OBTENER TIPOS DE INCIDENCIA
+
+ipcMain.handle(
+    "get-tipos-incidencia",
+    async () => {
+
+        return await incidenciaController
+            .getTiposIncidencia();
+
+    }
+);
+
+
+// REGISTRAR INCIDENCIA
+
+ipcMain.handle(
+    "registrar-incidencia",
+    async (
+        event,
+        incidencia
+    ) => {
+
+        return await incidenciaController
+            .registrarIncidencia(
+                incidencia
+            );
+
+    }
+);
 
 
 // ======================================================

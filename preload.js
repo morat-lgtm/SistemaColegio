@@ -107,6 +107,24 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
 
     // ==========================
+    // INCIDENCIAS
+    // ==========================
+
+    getTiposIncidencia: () =>
+        ipcRenderer.invoke(
+            "get-tipos-incidencia"
+        ),
+
+
+    registrarIncidencia: (incidencia) =>
+        ipcRenderer.invoke(
+            "registrar-incidencia",
+            incidencia
+        ),
+
+
+
+    // ==========================
     // REPORTES
     // ==========================
 
@@ -115,6 +133,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
             "get-reporte-estudiante",
             estudianteId
         ),
+
 
 
     // ==========================
@@ -241,4 +260,14 @@ console.log(
 
 console.log(
     "PRELOAD: exportarPDF definida correctamente"
+);
+
+
+console.log(
+    "PRELOAD: getTiposIncidencia definida correctamente"
+);
+
+
+console.log(
+    "PRELOAD: registrarIncidencia definida correctamente"
 );
