@@ -1,56 +1,56 @@
 const reporteRepository =
-require("../repositories/reporteRepository");
+    require("../repositories/reporteRepository");
 
 
 class ReporteService {
 
 
+    // ==========================
+    // REPORTE POR ESTUDIANTE
+    // ==========================
 
-// ==========================
-// REPORTE POR ESTUDIANTE
-// ==========================
+    async getReportePorEstudiante(estudianteId) {
 
-async getReportePorEstudiante(estudianteId){
+        return await reporteRepository
+            .getReportePorEstudiante(
+                estudianteId
+            );
 
-
-    return await reporteRepository
-    .getReportePorEstudiante(
-
-        estudianteId
-
-    );
+    }
 
 
-}
+    // ==========================
+    // REPORTE POR FECHA
+    // ==========================
+
+    async getReportePorFecha(fecha) {
+
+        return await reporteRepository
+            .getReportePorFecha(
+                fecha
+            );
+
+    }
 
 
+    // ==========================
+    // RANKING DE SALIDAS
+    // ==========================
 
+    async getRankingSalidas() {
 
+        return await reporteRepository
+            .getRankingSalidas();
 
-
-
-// ==========================
-// REPORTE POR FECHA
-// ==========================
-
-async getReportePorFecha(fecha){
-
-
-    return await reporteRepository
-    .getReportePorFecha(
-
-        fecha
-
-    );
-
-
-}
-
+    }
 
 
 }
 
 
+// ==========================
+// EXPORTAR
+// ==========================
 
 module.exports =
-new ReporteService();
+    new ReporteService();

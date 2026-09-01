@@ -1,5 +1,6 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+
 console.log("=================================");
 console.log("PRELOAD CARGADO");
 console.log("ARCHIVO PRELOAD:", __filename);
@@ -7,6 +8,7 @@ console.log("=================================");
 
 
 contextBridge.exposeInMainWorld("electronAPI", {
+
 
     // ==========================
     // ABRIR PRINCIPAL
@@ -16,6 +18,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.send(
             "abrir-principal"
         ),
+
 
 
     // ==========================
@@ -34,6 +37,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.invoke(
             "get-session"
         ),
+
 
 
     // ==========================
@@ -65,6 +69,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
+
     // ==========================
     // ESTUDIANTES
     // ==========================
@@ -81,11 +86,47 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
+
+    // ==========================
+    // BUSCAR ESTUDIANTES
+    // ==========================
+
+    buscarEstudiantes: (texto) =>
+        ipcRenderer.invoke(
+            "buscar-estudiantes",
+            texto
+        ),
+
+
     getStudentsByAmbiente: (ambienteId) =>
         ipcRenderer.invoke(
             "get-students-by-ambiente",
             ambienteId
         ),
+
+
+
+    // ==========================
+    // REPORTES
+    // ==========================
+
+    getReporteEstudiante: (estudianteId) =>
+        ipcRenderer.invoke(
+            "get-reporte-estudiante",
+            estudianteId
+        ),
+
+
+    // ==========================
+    // EXPORTAR PDF
+    // ==========================
+
+    exportarPDF: (html) =>
+        ipcRenderer.invoke(
+            "exportar-pdf",
+            html
+        ),
+
 
 
     // ==========================
@@ -112,6 +153,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
+
     // ==========================
     // HISTORIAL DE SALIDAS
     // ==========================
@@ -129,6 +171,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
+
     // ==========================
     // MOTIVOS DE SALIDA
     // ==========================
@@ -137,6 +180,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.invoke(
             "get-motivos-salida"
         ),
+
 
 
     // ==========================
@@ -164,6 +208,7 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
+
     // ==========================
     // USUARIOS
     // ==========================
@@ -173,9 +218,27 @@ contextBridge.exposeInMainWorld("electronAPI", {
             "get-usuarios"
         )
 
+
+
 });
+
 
 
 console.log(
     "PRELOAD: getHistorialSalidas definida correctamente"
+);
+
+
+console.log(
+    "PRELOAD: buscarEstudiantes definida correctamente"
+);
+
+
+console.log(
+    "PRELOAD: getReporteEstudiante definida correctamente"
+);
+
+
+console.log(
+    "PRELOAD: exportarPDF definida correctamente"
 );

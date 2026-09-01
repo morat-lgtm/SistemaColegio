@@ -1,11 +1,51 @@
 const express = require("express");
 
 const reporteController =
-require("../controllers/reporteController");
+    require("../controllers/reporteController");
 
 
 const router = express.Router();
 
+
+// ==========================
+// RANKING GENERAL DE SALIDAS
+// ==========================
+
+router.get(
+    "/ranking",
+    async (req, res) => {
+
+        try {
+
+            const resultado =
+                await reporteController
+                    .getRankingSalidas();
+
+
+            res.json(
+                resultado
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "Error ranking salidas:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                error:
+                    error.message
+
+            });
+
+        }
+
+    }
+);
 
 
 // ==========================
@@ -13,61 +53,42 @@ const router = express.Router();
 // ==========================
 
 router.get(
-"/estudiante/:id",
-async(req,res)=>{
+    "/estudiante/:id",
+    async (req, res) => {
+
+        try {
+
+            const resultado =
+                await reporteController
+                    .getReportePorEstudiante(
+                        req.params.id
+                    );
 
 
-    try{
+            res.json(
+                resultado
+            );
 
 
-        const resultado =
+        } catch (error) {
 
-        await reporteController
-        .getReportePorEstudiante(
-
-            req.params.id
-
-        );
+            console.error(
+                "Error reporte estudiante:",
+                error
+            );
 
 
+            res.status(500).json({
 
-        res.json(
+                error:
+                    error.message
 
-            resultado
+            });
 
-        );
-
-
-
-    }catch(error){
-
-
-        console.error(
-
-            "Error reporte estudiante:",
-
-            error
-
-        );
-
-
-
-        res.status(500).json({
-
-            error:error.message
-
-        });
-
+        }
 
     }
-
-
-});
-
-
-
-
-
+);
 
 
 // ==========================
@@ -75,60 +96,46 @@ async(req,res)=>{
 // ==========================
 
 router.get(
-"/fecha/:fecha",
-async(req,res)=>{
+    "/fecha/:fecha",
+    async (req, res) => {
+
+        try {
+
+            const resultado =
+                await reporteController
+                    .getReportePorFecha(
+                        req.params.fecha
+                    );
 
 
-    try{
+            res.json(
+                resultado
+            );
 
 
-        const resultado =
+        } catch (error) {
 
-        await reporteController
-        .getReportePorFecha(
-
-            req.params.fecha
-
-        );
+            console.error(
+                "Error reporte fecha:",
+                error
+            );
 
 
+            res.status(500).json({
 
-        res.json(
+                error:
+                    error.message
 
-            resultado
+            });
 
-        );
-
-
-
-    }catch(error){
-
-
-        console.error(
-
-            "Error reporte fecha:",
-
-            error
-
-        );
-
-
-
-        res.status(500).json({
-
-            error:error.message
-
-        });
-
+        }
 
     }
+);
 
 
-});
-
-
-
-
-
+// ==========================
+// EXPORTAR
+// ==========================
 
 module.exports = router;

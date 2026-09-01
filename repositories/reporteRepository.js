@@ -55,7 +55,8 @@ class ReporteRepository {
 
                 WHERE s.estudiante_id = $1
 
-                ORDER BY s.hora_salida DESC
+                ORDER BY
+                    s.hora_salida DESC
 
             `,
 
@@ -137,8 +138,77 @@ class ReporteRepository {
     }
 
 
+    // ==========================
+    // RANKING GENERAL DE SALIDAS
+    // ==========================
+
+    async getRankingSalidas() {
+
+        const db =
+            databaseManager.getConnection();
+
+
+        const result =
+            await db.query(`
+
+                SELECT
+
+                    e.id,
+
+                    e.apellidos,
+
+                    e.nombres,
+
+                    e.grado,
+
+                    e.nivel,
+
+                    e.seccion,
+
+                    COUNT(s.id) AS total_salidas,
+
+                    MAX(s.hora_salida) AS ultima_salida
+
+                FROM estudiantes e
+
+                INNER JOIN salidas s
+                    ON s.estudiante_id = e.id
+
+                GROUP BY
+
+                    e.id,
+
+                    e.apellidos,
+
+                    e.nombres,
+
+                    e.grado,
+
+                    e.nivel,
+
+                    e.seccion
+
+                ORDER BY
+
+                    COUNT(s.id) DESC,
+
+                    e.apellidos ASC,
+
+                    e.nombres ASC
+
+            `);
+
+
+        return result.rows;
+
+    }
+
 }
 
+
+// ==========================
+// EXPORTAR REPOSITORY
+// ==========================
 
 module.exports =
     new ReporteRepository();

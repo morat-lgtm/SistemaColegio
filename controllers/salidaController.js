@@ -1,5 +1,5 @@
 const salidaService =
-require("../services/salidaService");
+    require("../services/salidaService");
 
 
 class SalidaController {
@@ -7,107 +7,82 @@ class SalidaController {
 
 
 
-// ==========================
-// REGISTRAR SALIDA
-// ==========================
+    // ==========================
+    // REGISTRAR SALIDA
+    // ==========================
 
-async registrarSalida(salida){
+    async registrarSalida(salida) {
 
+        return await salidaService.registrarSalida(
+            salida
+        );
 
-    return await salidaService.registrarSalida(
-
-        salida
-
-    );
-
-
-}
+    }
 
 
 
 
 
+    // ==========================
+    // OBTENER SALIDAS ACTIVAS
+    // ==========================
 
+    async getSalidasActivas() {
 
-// ==========================
-// OBTENER SALIDAS ACTIVAS
-// ==========================
+        return await salidaService.getSalidasActivas();
 
-async getSalidasActivas(){
-
-
-    return await salidaService.getSalidasActivas();
-
-
-}
+    }
 
 
 
 
 
+    // ==========================
+    // REGISTRAR RETORNO
+    // ==========================
 
+    async registrarRetorno(id) {
 
-// ==========================
-// REGISTRAR RETORNO
-// ==========================
+        return await salidaService.registrarRetorno(
+            id
+        );
 
-async registrarRetorno(id){
-
-
-    return await salidaService.registrarRetorno(
-
-        id
-
-    );
-
-
-}
+    }
 
 
 
 
 
+    // ==========================
+    // OBTENER HISTORIAL COMPLETO
+    // ==========================
 
+    async getHistorial() {
 
-// ==========================
-// OBTENER HISTORIAL COMPLETO
-// ==========================
+        return await salidaService.getHistorial();
 
-async getHistorial(){
-
-
-    return await salidaService.getHistorial();
-
-
-}
+    }
 
 
 
 
 
+    // ==========================
+    // OBTENER HISTORIAL POR AMBIENTE
+    // ==========================
 
+    async getHistorialByAmbiente(ambienteId) {
 
-// ==========================
-// OBTENER HISTORIAL POR AMBIENTE
-// ==========================
+        return await salidaService.getHistorialByAmbiente(
+            ambienteId
+        );
 
-async getHistorialByAmbiente(ambienteId){
-
-
-    return await salidaService.getHistorialByAmbiente(
-
-        ambienteId
-
-    );
-
-
-}
+    }
 
 
 
 }
-
 
 
 module.exports =
-new SalidaController();
+    new SalidaController();

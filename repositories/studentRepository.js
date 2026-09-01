@@ -22,7 +22,11 @@ class StudentRepository {
 
                 FROM estudiantes
 
-                ORDER BY apellidos, nombres
+                WHERE activo = true
+
+                ORDER BY
+                    apellidos,
+                    nombres
 
             `);
 
@@ -51,7 +55,11 @@ class StudentRepository {
 
                 WHERE ambiente_id = $1
 
-                ORDER BY apellidos, nombres
+                AND activo = true
+
+                ORDER BY
+                    apellidos,
+                    nombres
 
             `,
             [
@@ -102,13 +110,28 @@ class StudentRepository {
 
 
     // ==========================
-    // BUSCAR TEXTO
+    // BUSCAR ESTUDIANTES
     // ==========================
 
     async search(texto) {
 
         const db =
             databaseManager.getConnection();
+
+
+        const textoBusqueda =
+            texto.trim();
+
+
+        if (textoBusqueda === "") {
+
+            return [];
+
+        }
+
+
+        const patron =
+            `%${textoBusqueda}%`;
 
 
         const result =
@@ -118,19 +141,47 @@ class StudentRepository {
 
                 FROM estudiantes
 
-                WHERE
+                WHERE activo = true
+
+                AND (
 
                     apellidos ILIKE $1
 
-                    OR nombres ILIKE $2
+                    OR nombres ILIKE $1
 
-                ORDER BY apellidos, nombres
+                    OR (
+
+                        apellidos || ' ' || nombres
+                    ) ILIKE $1
+
+                    OR (
+
+                        nombres || ' ' || apellidos
+                    ) ILIKE $1
+
+                    OR codigo ILIKE $1
+
+                    OR dni ILIKE $1
+
+                )
+
+                ORDER BY
+                    apellidos,
+                    nombres
+
+                LIMIT 20
 
             `,
             [
-                `%${texto}%`,
-                `%${texto}%`
+                patron
             ]);
+
+
+        console.log(
+            "BUSQUEDA DE ESTUDIANTES:",
+            textoBusqueda,
+            result.rows.length
+        );
 
 
         return result.rows;
@@ -244,7 +295,8 @@ class StudentRepository {
 
         return {
 
-            id: result.rows[0].id
+            id:
+                result.rows[0].id
 
         };
 
@@ -305,7 +357,8 @@ class StudentRepository {
 
         return {
 
-            cambios: result.rowCount
+            cambios:
+                result.rowCount
 
         };
 
@@ -337,7 +390,8 @@ class StudentRepository {
 
         return {
 
-            cambios: result.rowCount
+            cambios:
+                result.rowCount
 
         };
 
@@ -346,6 +400,10 @@ class StudentRepository {
 
 }
 
+
+// ==========================
+// EXPORTAR
+// ==========================
 
 module.exports =
     new StudentRepository();
