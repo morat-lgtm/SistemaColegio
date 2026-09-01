@@ -1,27 +1,31 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Segoe UI, Arial, sans-serif;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Arial, sans-serif;
 }
 
+
+/* ==========================
+   HTML / BODY
+========================== */
 
 html,
-body{
+body {
 
-    width:100%;
-    height:100%;
+    width: 100%;
+    height: 100%;
 
 }
 
 
-body{
+body {
 
-    background:#f2f4f8;
+    background: #f2f4f8;
 
-    overflow:hidden;
+    overflow: hidden;
 
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
@@ -30,19 +34,17 @@ body{
    CONTENEDOR
 ========================== */
 
-.container{
+.container {
 
-    display:flex;
+    display: flex;
 
-    width:100%;
+    width: 100%;
+    height: 100vh;
 
-    height:100vh;
+    min-width: 0;
+    min-height: 0;
 
-    min-width:0;
-
-    min-height:0;
-
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
@@ -51,62 +53,61 @@ body{
    SIDEBAR
 ========================== */
 
-.sidebar{
+.sidebar {
 
-    width:240px;
+    width: 240px;
+    min-width: 240px;
 
-    min-width:240px;
+    background: #1f2937;
 
-    background:#1f2937;
+    color: white;
 
-    color:white;
+    padding: 20px;
 
-    padding:20px;
+    overflow-y: auto;
 
-    overflow-y:auto;
-
-    -webkit-app-region:no-drag;
-
-}
-
-
-.sidebar h2{
-
-    margin-bottom:30px;
-
-    text-align:center;
+    -webkit-app-region: no-drag;
 
 }
 
 
-.sidebar button{
+.sidebar h2 {
 
-    width:100%;
+    margin-bottom: 30px;
 
-    padding:12px;
-
-    margin-bottom:10px;
-
-    border:none;
-
-    border-radius:6px;
-
-    cursor:pointer;
-
-    background:#374151;
-
-    color:white;
-
-    font-size:15px;
-
-    -webkit-app-region:no-drag;
+    text-align: center;
 
 }
 
 
-.sidebar button:hover{
+.sidebar button {
 
-    background:#2563eb;
+    width: 100%;
+
+    padding: 12px;
+
+    margin-bottom: 10px;
+
+    border: none;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    background: #374151;
+
+    color: white;
+
+    font-size: 15px;
+
+    -webkit-app-region: no-drag;
+
+}
+
+
+.sidebar button:hover {
+
+    background: #2563eb;
 
 }
 
@@ -115,21 +116,20 @@ body{
    CONTENIDO
 ========================== */
 
-.content{
+.content {
 
-    flex:1;
+    flex: 1;
 
-    min-width:0;
+    min-width: 0;
+    min-height: 0;
 
-    min-height:0;
+    display: flex;
 
-    display:flex;
+    flex-direction: column;
 
-    flex-direction:column;
+    overflow: hidden;
 
-    overflow:hidden;
-
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
@@ -138,25 +138,31 @@ body{
    TOPBAR
 ========================== */
 
-.topbar{
+.topbar {
 
-    height:70px;
+    height: 70px;
+    min-height: 70px;
 
-    min-height:70px;
+    background: white;
 
-    background:white;
+    display: flex;
 
-    display:flex;
+    justify-content: space-between;
 
-    justify-content:space-between;
+    align-items: center;
 
-    align-items:center;
+    padding: 20px;
 
-    padding:20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .1);
 
-    box-shadow:0 2px 6px rgba(0,0,0,.1);
+    -webkit-app-region: no-drag;
 
-    -webkit-app-region:no-drag;
+}
+
+
+.topbar h2 {
+
+    margin: 0;
 
 }
 
@@ -165,25 +171,24 @@ body{
    CONTENIDO DINÁMICO
 ========================== */
 
-#contenido{
+#contenido {
 
-    flex:1;
+    flex: 1;
 
-    min-width:0;
+    min-width: 0;
+    min-height: 0;
 
-    min-height:0;
+    padding: 25px;
 
-    padding:25px;
+    overflow: auto;
 
-    overflow:auto;
+    position: relative;
 
-    position:relative;
+    pointer-events: auto;
 
-    pointer-events:auto;
+    user-select: auto;
 
-    user-select:auto;
-
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
@@ -195,21 +200,21 @@ body{
 input,
 select,
 textarea,
-button{
+button {
 
-    pointer-events:auto;
+    pointer-events: auto;
 
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
 
 input,
-textarea{
+textarea {
 
-    user-select:text;
+    user-select: text;
 
-    -webkit-user-select:text;
+    -webkit-user-select: text;
 
 }
 
@@ -218,55 +223,55 @@ textarea{
    ESTUDIANTES
 ========================== */
 
-.student-card{
+.student-card {
 
-    background:#ffffff;
+    background: #ffffff;
 
-    border-left:5px solid #2563eb;
+    border-left: 5px solid #2563eb;
 
-    border-radius:8px;
+    border-radius: 8px;
 
-    padding:15px;
+    padding: 15px;
 
-    margin-bottom:12px;
+    margin-bottom: 12px;
 
-    box-shadow:0 2px 6px rgba(0,0,0,.08);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .08);
 
-    transition:.2s;
-
-}
-
-
-.student-card:hover{
-
-    transform:translateY(-2px);
-
-    box-shadow:0 4px 12px rgba(0,0,0,.15);
+    transition: .2s;
 
 }
 
 
-.student-card h3{
+.student-card:hover {
 
-    margin-bottom:6px;
+    transform: translateY(-2px);
 
-    color:#1f2937;
-
-}
-
-
-.student-card p{
-
-    margin-bottom:6px;
-
-    color:#374151;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .15);
 
 }
 
 
-.student-card small{
+.student-card h3 {
 
-    color:#6b7280;
+    margin-bottom: 6px;
+
+    color: #1f2937;
+
+}
+
+
+.student-card p {
+
+    margin-bottom: 6px;
+
+    color: #374151;
+
+}
+
+
+.student-card small {
+
+    color: #6b7280;
 
 }
 
@@ -275,67 +280,67 @@ textarea{
    HISTORIAL SALIDAS
 ========================== */
 
-.historial-card{
+.historial-card {
 
-    background:white;
+    background: white;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    padding:18px;
+    padding: 18px;
 
-    margin-bottom:18px;
+    margin-bottom: 18px;
 
     box-shadow:
-    0 3px 10px rgba(0,0,0,0.15);
+        0 3px 10px rgba(0, 0, 0, .15);
 
-    border-left:10px solid #999;
-
-}
-
-
-.estado-activa{
-
-    border-left-color:red;
+    border-left: 10px solid #999;
 
 }
 
 
-.estado-retornado{
+.estado-activa {
 
-    border-left-color:green;
-
-}
-
-
-.estado{
-
-    margin-top:10px;
-
-    padding:8px;
-
-    border-radius:8px;
-
-    font-weight:bold;
-
-    text-align:center;
+    border-left-color: red;
 
 }
 
 
-.estado-activa .estado{
+.estado-retornado {
 
-    background:#ffdada;
-
-    color:#b00000;
+    border-left-color: green;
 
 }
 
 
-.estado-retornado .estado{
+.estado {
 
-    background:#d9ffd9;
+    margin-top: 10px;
 
-    color:#006600;
+    padding: 8px;
+
+    border-radius: 8px;
+
+    font-weight: bold;
+
+    text-align: center;
+
+}
+
+
+.estado-activa .estado {
+
+    background: #ffdada;
+
+    color: #b00000;
+
+}
+
+
+.estado-retornado .estado {
+
+    background: #d9ffd9;
+
+    color: #006600;
 
 }
 
@@ -344,59 +349,59 @@ textarea{
    SALIDAS ACTIVAS
 ========================== */
 
-.salida-card{
+.salida-card {
 
-    background:white;
+    background: white;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    padding:18px;
+    padding: 18px;
 
-    margin-bottom:18px;
+    margin-bottom: 18px;
 
-    border-left:10px solid red;
+    border-left: 10px solid red;
 
     box-shadow:
-    0 3px 10px rgba(0,0,0,0.15);
+        0 3px 10px rgba(0, 0, 0, .15);
 
 }
 
 
-.salida-card h3{
+.salida-card h3 {
 
-    color:#b00000;
-
-}
-
-
-.btn-retorno{
-
-    width:100%;
-
-    padding:12px;
-
-    margin-top:10px;
-
-    border:none;
-
-    border-radius:10px;
-
-    background:#16a34a;
-
-    color:white;
-
-    font-size:15px;
-
-    cursor:pointer;
-
-    -webkit-app-region:no-drag;
+    color: #b00000;
 
 }
 
 
-.btn-retorno:hover{
+.btn-retorno {
 
-    background:#15803d;
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 10px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #16a34a;
+
+    color: white;
+
+    font-size: 15px;
+
+    cursor: pointer;
+
+    -webkit-app-region: no-drag;
+
+}
+
+
+.btn-retorno:hover {
+
+    background: #15803d;
 
 }
 
@@ -405,131 +410,131 @@ textarea{
    FORMULARIO DE SALIDAS
 ========================== */
 
-.form-salida{
+.form-salida {
 
-    -webkit-app-region:no-drag;
-
-}
-
-
-#txtBuscarSalida{
-
-    width:350px;
-
-    padding:12px;
-
-    border:1px solid #cbd5e1;
-
-    border-radius:8px;
-
-    font-size:16px;
-
-    outline:none;
-
-    pointer-events:auto;
-
-    user-select:text;
-
-    -webkit-user-select:text;
-
-    -webkit-app-region:no-drag;
-
-    cursor:text;
+    -webkit-app-region: no-drag;
 
 }
 
 
-#txtBuscarSalida:focus{
+#txtBuscarSalida {
 
-    border-color:#2563eb;
+    width: 350px;
 
-    outline:none;
+    padding: 12px;
 
-}
+    border: 1px solid #cbd5e1;
 
+    border-radius: 8px;
 
-#cmbMotivo{
+    font-size: 16px;
 
-    width:220px;
+    outline: none;
 
-    padding:12px;
+    pointer-events: auto;
 
-    border:1px solid #cbd5e1;
+    user-select: text;
 
-    border-radius:8px;
+    -webkit-user-select: text;
 
-    font-size:16px;
+    -webkit-app-region: no-drag;
 
-    margin-top:10px;
-
-    pointer-events:auto;
-
-    -webkit-app-region:no-drag;
-
-    cursor:pointer;
+    cursor: text;
 
 }
 
 
-#txtObservacion{
+#txtBuscarSalida:focus {
 
-    width:350px;
+    border-color: #2563eb;
 
-    height:70px;
-
-    padding:12px;
-
-    border:1px solid #cbd5e1;
-
-    border-radius:8px;
-
-    font-size:16px;
-
-    resize:none;
-
-    margin-top:10px;
-
-    pointer-events:auto;
-
-    user-select:text;
-
-    -webkit-user-select:text;
-
-    -webkit-app-region:no-drag;
-
-    cursor:text;
+    outline: none;
 
 }
 
 
-#btnRegistrarSalida{
+#cmbMotivo {
 
-    background:#2563eb;
+    width: 220px;
 
-    color:white;
+    padding: 12px;
 
-    border:none;
+    border: 1px solid #cbd5e1;
 
-    padding:12px 20px;
+    border-radius: 8px;
 
-    border-radius:8px;
+    font-size: 16px;
 
-    font-size:16px;
+    margin-top: 10px;
 
-    cursor:pointer;
+    pointer-events: auto;
 
-    margin-left:10px;
+    -webkit-app-region: no-drag;
 
-    pointer-events:auto;
-
-    -webkit-app-region:no-drag;
+    cursor: pointer;
 
 }
 
 
-#btnRegistrarSalida:hover{
+#txtObservacion {
 
-    background:#1d4ed8;
+    width: 350px;
+
+    height: 70px;
+
+    padding: 12px;
+
+    border: 1px solid #cbd5e1;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    resize: none;
+
+    margin-top: 10px;
+
+    pointer-events: auto;
+
+    user-select: text;
+
+    -webkit-user-select: text;
+
+    -webkit-app-region: no-drag;
+
+    cursor: text;
+
+}
+
+
+#btnRegistrarSalida {
+
+    background: #2563eb;
+
+    color: white;
+
+    border: none;
+
+    padding: 12px 20px;
+
+    border-radius: 8px;
+
+    font-size: 16px;
+
+    cursor: pointer;
+
+    margin-left: 10px;
+
+    pointer-events: auto;
+
+    -webkit-app-region: no-drag;
+
+}
+
+
+#btnRegistrarSalida:hover {
+
+    background: #1d4ed8;
 
 }
 
@@ -538,47 +543,47 @@ textarea{
    AUTOCOMPLETADO
 ========================== */
 
-#resultadoEstudiantes{
+#resultadoEstudiantes {
 
-    width:350px;
+    width: 350px;
 
-    background:white;
+    background: white;
 
-    border-radius:8px;
+    border-radius: 8px;
 
-    overflow:hidden;
+    overflow: hidden;
 
-    margin-top:5px;
+    margin-top: 5px;
 
-    position:relative;
+    position: relative;
 
-    z-index:1000;
+    z-index: 1000;
 
-    pointer-events:auto;
+    pointer-events: auto;
 
-    -webkit-app-region:no-drag;
-
-}
-
-
-.resultado-estudiante{
-
-    padding:12px;
-
-    border:1px solid #e5e7eb;
-
-    cursor:pointer;
-
-    pointer-events:auto;
-
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
 
-.resultado-estudiante:hover{
+.resultado-estudiante {
 
-    background:#eff6ff;
+    padding: 12px;
+
+    border: 1px solid #e5e7eb;
+
+    cursor: pointer;
+
+    pointer-events: auto;
+
+    -webkit-app-region: no-drag;
+
+}
+
+
+.resultado-estudiante:hover {
+
+    background: #eff6ff;
 
 }
 
@@ -587,28 +592,28 @@ textarea{
    INCIDENCIAS
 ========================== */
 
-.card{
+.card {
 
-    background:white;
+    background: white;
 
-    padding:25px;
+    padding: 25px;
 
-    margin-bottom:20px;
+    margin-bottom: 20px;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    box-shadow:0 3px 10px rgba(0,0,0,.12);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, .12);
 
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
 
-.card h2{
+.card h2 {
 
-    margin-top:0;
+    margin-top: 0;
 
-    color:#1e293b;
+    color: #1e293b;
 
 }
 
@@ -618,42 +623,42 @@ textarea{
 ========================== */
 
 input[type="text"],
-textarea{
+textarea {
 
-    width:100%;
+    width: 100%;
 
-    max-width:500px;
+    max-width: 500px;
 
-    padding:12px;
+    padding: 12px;
 
-    border-radius:10px;
+    border-radius: 10px;
 
-    border:1px solid #cbd5e1;
+    border: 1px solid #cbd5e1;
 
-    font-size:16px;
+    font-size: 16px;
 
-    outline:none;
+    outline: none;
 
-    pointer-events:auto;
+    pointer-events: auto;
 
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
 
 input[type="text"]:focus,
-textarea:focus{
+textarea:focus {
 
-    border-color:#2563eb;
+    border-color: #2563eb;
 
-    box-shadow:0 0 5px rgba(37,99,235,.3);
+    box-shadow: 0 0 5px rgba(37, 99, 235, .3);
 
 }
 
 
-textarea{
+textarea {
 
-    resize:none;
+    resize: none;
 
 }
 
@@ -662,37 +667,37 @@ textarea{
    RESULTADOS
 ========================== */
 
-.resultado-estudiantes{
+.resultado-estudiantes {
 
-    width:100%;
+    width: 100%;
 
-    max-width:500px;
+    max-width: 500px;
 
-    position:relative;
-
-}
-
-
-.resultado-estudiante{
-
-    background:#f8fafc;
-
-    padding:12px;
-
-    margin-top:5px;
-
-    border-radius:8px;
-
-    cursor:pointer;
-
-    border:1px solid #e2e8f0;
+    position: relative;
 
 }
 
 
-.resultado-estudiante:hover{
+.resultado-estudiante {
 
-    background:#dbeafe;
+    background: #f8fafc;
+
+    padding: 12px;
+
+    margin-top: 5px;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    border: 1px solid #e2e8f0;
+
+}
+
+
+.resultado-estudiante:hover {
+
+    background: #dbeafe;
 
 }
 
@@ -703,17 +708,17 @@ textarea{
 
 #estudianteSeleccionadoIncidencia,
 #incidenciaSeleccionada,
-#estudianteSeleccionadoReporteIncidencia{
+#estudianteSeleccionadoReporteIncidencia {
 
-    margin-top:15px;
+    margin-top: 15px;
 
-    padding:15px;
+    padding: 15px;
 
-    background:#eff6ff;
+    background: #eff6ff;
 
-    border-left:5px solid #2563eb;
+    border-left: 5px solid #2563eb;
 
-    border-radius:10px;
+    border-radius: 10px;
 
 }
 
@@ -722,39 +727,39 @@ textarea{
    BOTONES
 ========================== */
 
-button{
+button {
 
-    border:none;
+    border: none;
 
-    padding:12px 20px;
+    padding: 12px 20px;
 
-    border-radius:10px;
+    border-radius: 10px;
 
-    cursor:pointer;
+    cursor: pointer;
 
-    font-size:15px;
+    font-size: 15px;
 
-    -webkit-app-region:no-drag;
+    -webkit-app-region: no-drag;
 
 }
 
 
 #btnRegistrarIncidencia,
 #btnConsultarReporteIncidencia,
-#btnActualizarIncidencias{
+#btnActualizarIncidencias {
 
-    background:#2563eb;
+    background: #2563eb;
 
-    color:white;
+    color: white;
 
 }
 
 
 #btnRegistrarIncidencia:hover,
 #btnConsultarReporteIncidencia:hover,
-#btnActualizarIncidencias:hover{
+#btnActualizarIncidencias:hover {
 
-    background:#1d4ed8;
+    background: #1d4ed8;
 
 }
 
@@ -763,44 +768,44 @@ button{
    TABLAS
 ========================== */
 
-.tabla{
+.tabla {
 
-    width:100%;
+    width: 100%;
 
-    border-collapse:collapse;
+    border-collapse: collapse;
 
-    margin-top:20px;
+    margin-top: 20px;
 
-    background:white;
-
-}
-
-
-.tabla th{
-
-    background:#1e293b;
-
-    color:white;
-
-    padding:12px;
-
-    text-align:left;
+    background: white;
 
 }
 
 
-.tabla td{
+.tabla th {
 
-    padding:12px;
+    background: #1e293b;
 
-    border-bottom:1px solid #e2e8f0;
+    color: white;
+
+    padding: 12px;
+
+    text-align: left;
 
 }
 
 
-.tabla tr:hover{
+.tabla td {
 
-    background:#f8fafc;
+    padding: 12px;
+
+    border-bottom: 1px solid #e2e8f0;
+
+}
+
+
+.tabla tr:hover {
+
+    background: #f8fafc;
 
 }
 
@@ -809,9 +814,9 @@ button{
    REPORTE
 ========================== */
 
-#resultadoReporteIncidenciaFinal{
+#resultadoReporteIncidenciaFinal {
 
-    overflow:auto;
+    overflow: auto;
 
 }
 
@@ -820,118 +825,118 @@ button{
    HISTORIAL INCIDENCIAS
 ========================== */
 
-#resultadoHistorialIncidencias{
+#resultadoHistorialIncidencias {
 
-    overflow:auto;
+    overflow: auto;
+
+}
+
+
+#resultadoHistorialIncidencias table {
+
+    min-width: 900px;
 
 }
 
 
-#resultadoHistorialIncidencias table{
-
-    min-width:900px;
-
-}
 /* ==========================
    INICIO
 ========================== */
 
-.inicio{
+.inicio {
 
-    width:100%;
+    width: 100%;
 
 }
 
 
-.inicio-header{
+.inicio-header {
 
-    background:white;
+    background: white;
 
-    border-radius:15px;
+    border-radius: 15px;
 
-    padding:25px;
+    padding: 25px;
 
-    margin-bottom:25px;
+    margin-bottom: 25px;
 
     box-shadow:
-        0 3px 10px rgba(0,0,0,.10);
+        0 3px 10px rgba(0, 0, 0, .10);
 
 }
 
 
-.inicio-header h1{
+.inicio-header h1 {
 
-    margin:0 0 10px 0;
+    margin: 0 0 10px 0;
 
-    color:#1e293b;
+    color: #1e293b;
 
-    font-size:30px;
-
-}
-
-
-.inicio-header p{
-
-    margin:0;
-
-    color:#475569;
-
-    font-size:17px;
+    font-size: 30px;
 
 }
 
 
-.inicio-card{
+.inicio-header p {
 
-    background:white;
+    margin: 0;
 
-    border-radius:15px;
+    color: #475569;
 
-    padding:30px;
+    font-size: 17px;
+
+}
+
+
+.inicio-card {
+
+    background: white;
+
+    border-radius: 15px;
+
+    padding: 30px;
 
     box-shadow:
-        0 3px 10px rgba(0,0,0,.10);
+        0 3px 10px rgba(0, 0, 0, .10);
 
-    border-left:6px solid #2563eb;
-
-}
-
-
-.inicio-card h2{
-
-    margin:0 0 10px 0;
-
-    color:#2563eb;
-
-    font-size:25px;
+    border-left: 6px solid #2563eb;
 
 }
 
 
-.inicio-card p{
+.inicio-card h2 {
 
-    color:#475569;
+    margin: 0 0 10px 0;
 
-    font-size:16px;
+    color: #2563eb;
 
-    margin:8px 0;
+    font-size: 25px;
 
 }
+
+
+.inicio-card p {
+
+    color: #475569;
+
+    font-size: 16px;
+
+    margin: 8px 0;
+
+}
+
+
 /* ==========================================================
-   RESPONSIVE - TABLETS Y CELULARES
-   ========================================================== */
-
-
-/* ==========================
-   TABLETS
-   ========================== */
+   RESPONSIVE - TABLETS
+========================================================== */
 
 @media (max-width: 900px) {
 
     .sidebar {
 
-        width: 200px;
-        min-width: 200px;
+        width: 210px;
+
+        min-width: 210px;
 
         padding: 15px;
 
@@ -941,6 +946,7 @@ button{
     .sidebar button {
 
         font-size: 14px;
+
         padding: 11px 8px;
 
     }
@@ -976,17 +982,17 @@ button{
 }
 
 
-/* ==========================
+/* ==========================================================
    CELULARES
-   ========================== */
+========================================================== */
 
 @media (max-width: 600px) {
-
 
     html,
     body {
 
         width: 100%;
+
         height: 100%;
 
         overflow: hidden;
@@ -996,43 +1002,63 @@ button{
 
     /* ==========================
        CONTENEDOR
-       ========================== */
+    ========================== */
 
     .container {
 
-        display: block;
+        display: flex;
+
+        flex-direction: column;
 
         width: 100%;
-        height: 100vh;
 
-        min-width: 0;
+        height: 100dvh;
+
+        min-height: 0;
 
     }
 
 
     /* ==========================
-       SIDEBAR
-       ========================== */
+       MENÚ SUPERIOR
+    ========================== */
 
     .sidebar {
 
         width: 100%;
-        min-width: 0;
+
+        min-width: 100%;
 
         height: auto;
 
-        padding: 10px;
+        min-height: 0;
 
-        overflow: visible;
+        padding: 8px;
+
+        overflow-x: auto;
+
+        overflow-y: hidden;
+
+        white-space: nowrap;
+
+        flex-shrink: 0;
+
+        display: block;
+
+        -webkit-overflow-scrolling: touch;
 
     }
 
 
     .sidebar h2 {
 
-        margin: 5px 0 10px 0;
+        display: inline-block;
 
-        font-size: 22px;
+        margin: 2px 12px 8px 2px;
+
+        font-size: 20px;
+
+        vertical-align: middle;
 
     }
 
@@ -1041,43 +1067,61 @@ button{
 
         display: inline-block;
 
-        width: calc(50% - 6px);
+        width: auto;
 
-        margin: 3px;
+        min-width: 105px;
 
-        padding: 10px 6px;
+        margin: 2px 4px 8px 0;
+
+        padding: 10px 12px;
 
         font-size: 13px;
+
+        vertical-align: middle;
 
     }
 
 
     /* ==========================
-       CONTENIDO
-       ========================== */
+       ÁREA PRINCIPAL
+    ========================== */
 
     .content {
 
         width: 100%;
-        height: calc(100vh - 150px);
 
-        min-width: 0;
+        height: auto;
+
+        flex: 1;
+
+        min-height: 0;
+
+        overflow: hidden;
+
+        display: flex;
+
+        flex-direction: column;
 
     }
 
 
     /* ==========================
        BARRA SUPERIOR
-       ========================== */
+    ========================== */
 
     .topbar {
 
+        width: 100%;
+
         height: auto;
+
         min-height: 55px;
 
-        padding: 10px;
+        padding: 10px 12px;
 
-        gap: 8px;
+        gap: 5px;
+
+        flex-shrink: 0;
 
     }
 
@@ -1086,7 +1130,7 @@ button{
 
         margin: 0;
 
-        font-size: 15px;
+        font-size: 14px;
 
         line-height: 1.2;
 
@@ -1095,7 +1139,7 @@ button{
 
     #lblHora {
 
-        font-size: 13px;
+        font-size: 12px;
 
         white-space: nowrap;
 
@@ -1103,24 +1147,31 @@ button{
 
 
     /* ==========================
-       CONTENIDO DINÁMICO
-       ========================== */
+       CONTENIDO
+    ========================== */
 
     #contenido {
 
         width: 100%;
 
-        padding: 12px;
+        flex: 1;
+
+        min-height: 0;
+
+        padding: 10px;
 
         overflow-x: hidden;
+
         overflow-y: auto;
+
+        -webkit-overflow-scrolling: touch;
 
     }
 
 
     /* ==========================
        TARJETAS
-       ========================== */
+    ========================== */
 
     .card,
     .inicio-header,
@@ -1130,7 +1181,9 @@ button{
 
         width: 100%;
 
-        padding: 15px;
+        max-width: 100%;
+
+        padding: 14px;
 
         margin-bottom: 12px;
 
@@ -1141,28 +1194,35 @@ button{
 
     .inicio-header h1 {
 
-        font-size: 23px;
+        font-size: 22px;
 
     }
 
 
     .inicio-header p {
 
-        font-size: 15px;
+        font-size: 14px;
 
     }
 
 
     .inicio-card h2 {
 
-        font-size: 20px;
+        font-size: 19px;
+
+    }
+
+
+    .inicio-card p {
+
+        font-size: 14px;
 
     }
 
 
     /* ==========================
        ESTUDIANTES
-       ========================== */
+    ========================== */
 
     .student-card {
 
@@ -1175,14 +1235,30 @@ button{
 
     .student-card h3 {
 
-        font-size: 17px;
+        font-size: 16px;
+
+    }
+
+
+    .student-card p {
+
+        font-size: 14px;
 
     }
 
 
     /* ==========================
        FORMULARIOS
-       ========================== */
+    ========================== */
+
+    input,
+    select,
+    textarea {
+
+        max-width: 100% !important;
+
+    }
+
 
     input[type="text"],
     input[type="search"],
@@ -1193,43 +1269,47 @@ button{
 
         width: 100% !important;
 
-        max-width: none !important;
+        min-height: 44px;
 
         box-sizing: border-box;
+
+        font-size: 16px;
 
     }
 
 
     #txtBuscarSalida {
 
-        width: 100%;
+        width: 100% !important;
 
-        max-width: none;
+        max-width: 100% !important;
 
     }
 
 
     #cmbMotivo {
 
-        width: 100%;
+        width: 100% !important;
 
-        max-width: none;
+        max-width: 100% !important;
 
     }
 
 
     #txtObservacion {
 
-        width: 100%;
+        width: 100% !important;
 
-        max-width: none;
+        max-width: 100% !important;
+
+        min-height: 80px;
 
     }
 
 
     /* ==========================
-       BOTONES
-       ========================== */
+       BOTONES DE FORMULARIO
+    ========================== */
 
     #btnRegistrarSalida,
     #btnRegistrarIncidencia,
@@ -1240,10 +1320,16 @@ button{
 
         margin: 10px 0 0 0;
 
-        padding: 13px;
+        min-height: 44px;
+
+        padding: 12px;
 
     }
 
+
+    /* ==========================
+       BOTONES GENERALES
+    ========================== */
 
     button {
 
@@ -1254,21 +1340,28 @@ button{
 
     /* ==========================
        AUTOCOMPLETADO
-       ========================== */
+    ========================== */
 
     #resultadoEstudiantes,
     .resultado-estudiantes {
 
         width: 100%;
 
-        max-width: none;
+        max-width: 100%;
+
+    }
+
+
+    .resultado-estudiante {
+
+        padding: 12px;
 
     }
 
 
     /* ==========================
        TABLAS
-       ========================== */
+    ========================== */
 
     #resultadoReporteIncidenciaFinal,
     #resultadoHistorialIncidencias {
@@ -1278,6 +1371,8 @@ button{
         max-width: 100%;
 
         overflow-x: auto;
+
+        overflow-y: visible;
 
         -webkit-overflow-scrolling: touch;
 
@@ -1300,7 +1395,7 @@ button{
 
     /* ==========================
        HISTORIAL
-       ========================== */
+    ========================== */
 
     .historial-card {
 
@@ -1311,7 +1406,7 @@ button{
 
     .historial-card h3 {
 
-        font-size: 17px;
+        font-size: 16px;
 
     }
 
@@ -1325,7 +1420,7 @@ button{
 
     /* ==========================
        SALIDAS ACTIVAS
-       ========================== */
+    ========================== */
 
     .salida-card {
 
@@ -1336,7 +1431,7 @@ button{
 
     .salida-card h3 {
 
-        font-size: 17px;
+        font-size: 16px;
 
     }
 
@@ -1345,48 +1440,65 @@ button{
 
         width: 100%;
 
-        padding: 13px;
+        min-height: 44px;
+
+        padding: 12px;
 
     }
 
 }
 
 
-/* ==========================
+/* ==========================================================
    CELULARES MUY PEQUEÑOS
-   ========================== */
+========================================================== */
 
 @media (max-width: 400px) {
 
+    .sidebar {
 
-    .sidebar button {
-
-        width: 100%;
-
-        margin: 3px 0;
+        padding: 6px;
 
     }
 
 
-    .content {
+    .sidebar h2 {
 
-        height: calc(100vh - 390px);
+        font-size: 18px;
+
+        margin-right: 8px;
+
+    }
+
+
+    .sidebar button {
+
+        min-width: 95px;
+
+        padding: 9px 10px;
+
+        font-size: 12px;
 
     }
 
 
     .topbar {
 
-        flex-direction: column;
+        padding: 8px 10px;
 
-        align-items: flex-start;
+    }
+
+
+    .topbar h2 {
+
+        font-size: 13px;
 
     }
 
 
     #lblHora {
 
-        align-self: flex-end;
+        font-size: 11px;
 
     }
 
