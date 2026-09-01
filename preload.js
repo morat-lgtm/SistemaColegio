@@ -1,22 +1,26 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
+console.log("=================================");
+console.log("PRELOAD CARGADO");
+console.log("ARCHIVO PRELOAD:", __filename);
+console.log("=================================");
+
 
 contextBridge.exposeInMainWorld("electronAPI", {
 
-
+    // ==========================
+    // ABRIR PRINCIPAL
+    // ==========================
 
     abrirPrincipal: () =>
-        ipcRenderer.send("abrir-principal"),
-
-
-
-
+        ipcRenderer.send(
+            "abrir-principal"
+        ),
 
 
     // ==========================
     // LOGIN / SESIÓN
     // ==========================
-
 
     login: (usuario, password) =>
         ipcRenderer.invoke(
@@ -26,22 +30,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
     getSession: () =>
         ipcRenderer.invoke(
             "get-session"
         ),
 
 
-
-
-
-
-
     // ==========================
     // WORKSTATIONS
     // ==========================
-
 
     getHostname: () =>
         ipcRenderer.invoke(
@@ -49,12 +46,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
     getAmbientes: () =>
         ipcRenderer.invoke(
             "get-ambientes"
         ),
-
 
 
     saveWorkstation: (ambienteId) =>
@@ -64,23 +59,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
     getWorkstation: () =>
         ipcRenderer.invoke(
             "get-workstation"
         ),
 
 
-
-
-
-
-
-
     // ==========================
     // ESTUDIANTES
     // ==========================
-
 
     importarEstudiantes: () =>
         ipcRenderer.invoke(
@@ -88,12 +75,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
     getStudents: () =>
         ipcRenderer.invoke(
             "get-students"
         ),
-
 
 
     getStudentsByAmbiente: (ambienteId) =>
@@ -103,16 +88,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
-
-
-
-
-
     // ==========================
     // SALIDAS
     // ==========================
-
 
     registrarSalida: (salida) =>
         ipcRenderer.invoke(
@@ -121,12 +99,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
     getSalidasActivas: () =>
         ipcRenderer.invoke(
             "get-salidas-activas"
         ),
-
 
 
     registrarRetorno: (id) =>
@@ -136,17 +112,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
-    // Historial completo
+    // ==========================
+    // HISTORIAL DE SALIDAS
+    // ==========================
 
     getHistorialSalidas: () =>
         ipcRenderer.invoke(
             "get-historial-salidas"
         ),
 
-
-
-    // Historial solo del aula
 
     getHistorialSalidasByAmbiente: (ambienteId) =>
         ipcRenderer.invoke(
@@ -155,16 +129,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
-
-
-
-
-
     // ==========================
     // MOTIVOS DE SALIDA
     // ==========================
-
 
     getMotivosSalida: () =>
         ipcRenderer.invoke(
@@ -172,23 +139,15 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
-
-
-
-
-
     // ==========================
     // MENSAJES INTERNOS
     // ==========================
-
 
     registrarMensaje: (mensaje) =>
         ipcRenderer.invoke(
             "registrar-mensaje",
             mensaje
         ),
-
 
 
     getMensajes: (usuarioId) =>
@@ -198,7 +157,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
     marcarMensajeLeido: (id) =>
         ipcRenderer.invoke(
             "marcar-mensaje-leido",
@@ -206,22 +164,18 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ),
 
 
-
-
-
-
-
-
     // ==========================
     // USUARIOS
     // ==========================
-
 
     getUsuarios: () =>
         ipcRenderer.invoke(
             "get-usuarios"
         )
 
-
-
 });
+
+
+console.log(
+    "PRELOAD: getHistorialSalidas definida correctamente"
+);

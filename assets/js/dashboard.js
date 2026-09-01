@@ -1,4 +1,6 @@
-const contenido = document.getElementById("contenido");
+const contenido =
+    document.getElementById("contenido");
+
 
 let scriptActual = null;
 
@@ -11,9 +13,14 @@ async function cargarPagina(nombrePagina) {
 
     try {
 
+        console.log(
+            "Cargando página:",
+            nombrePagina
+        );
+
 
         // ==========================
-        // ELIMINAR SCRIPT ANTERIOR
+        // LIMPIAR SCRIPT ANTERIOR
         // ==========================
 
         if (scriptActual) {
@@ -25,67 +32,120 @@ async function cargarPagina(nombrePagina) {
         }
 
 
-
         document
-        .querySelectorAll(".page-script")
-        .forEach(script => {
+            .querySelectorAll(".page-script")
+            .forEach(script => {
 
-            script.remove();
+                script.remove();
 
-        });
-
+            });
 
 
         // ==========================
         // CARGAR HTML
         // ==========================
 
-
         const respuesta =
-            await fetch(`pages/${nombrePagina}.html`);
+            await fetch(
+                `pages/${nombrePagina}.html`
+            );
 
+
+        if (!respuesta.ok) {
+
+            throw new Error(
+                `No se pudo cargar ${nombrePagina}.html`
+            );
+
+        }
 
 
         const html =
             await respuesta.text();
 
 
-
-        contenido.innerHTML = html;
-
-
+        contenido.innerHTML =
+            html;
 
 
         // ==========================
-        // CARGAR JS DEL MÓDULO
+        // ASEGURAR INTERACCIÓN
         // ==========================
 
+        contenido.style.pointerEvents =
+            "auto";
+
+        contenido.style.userSelect =
+            "auto";
+
+
+        // ==========================
+        // CARGAR JAVASCRIPT DE PÁGINA
+        // ==========================
 
         const script =
             document.createElement("script");
 
 
-
         script.src =
-            `../assets/js/pages/${nombrePagina}.js`;
-
+    `/assets/js/pages/${nombrePagina}.js`;
 
 
         script.className =
             "page-script";
 
 
+        script.type =
+            "text/javascript";
 
-        scriptActual = script;
+
+        scriptActual =
+            script;
 
 
+        // ==========================
+        // SCRIPT CARGADO
+        // ==========================
 
-        contenido.appendChild(script);
+        script.onload = () => {
 
+            console.log(
+                `Script ${nombrePagina}.js cargado correctamente.`
+            );
+
+        };
+
+
+        // ==========================
+        // ERROR SCRIPT
+        // ==========================
+
+        script.onerror = (error) => {
+
+            console.error(
+                `Error cargando ${nombrePagina}.js:`,
+                error
+            );
+
+        };
+
+
+        // ==========================
+        // INSERTAR SCRIPT
+        // ==========================
+
+        contenido.appendChild(
+            script
+        );
 
 
     }
     catch(error) {
+
+        console.error(
+            "Error cargando página:",
+            error
+        );
 
 
         contenido.innerHTML = `
@@ -98,14 +158,9 @@ async function cargarPagina(nombrePagina) {
 
         `;
 
-
-        console.error(error);
-
-
     }
 
 }
-
 
 
 // ==========================
@@ -114,15 +169,14 @@ async function cargarPagina(nombrePagina) {
 
 function actualizarHora() {
 
-
     const ahora =
         new Date();
 
 
-
     const reloj =
-        document.getElementById("lblHora");
-
+        document.getElementById(
+            "lblHora"
+        );
 
 
     if (reloj) {
@@ -132,14 +186,16 @@ function actualizarHora() {
 
     }
 
-
 }
 
 
-setInterval(actualizarHora,1000);
+setInterval(
+    actualizarHora,
+    1000
+);
+
 
 actualizarHora();
-
 
 
 // ==========================
@@ -147,34 +203,58 @@ actualizarHora();
 // ==========================
 
 
-document
-.getElementById("btnInicio")
-.addEventListener("click", () => {
-
-    cargarPagina("inicio");
-
-});
-
-
+// ==========================
+// INICIO
+// ==========================
 
 document
-.getElementById("btnEstudiantes")
-.addEventListener("click", () => {
+    .getElementById("btnInicio")
+    .addEventListener(
+        "click",
+        () => {
 
-    cargarPagina("estudiantes");
+            cargarPagina(
+                "inicio"
+            );
 
-});
+        }
+    );
 
 
+// ==========================
+// ESTUDIANTES
+// ==========================
 
 document
-.getElementById("btnSalidas")
-.addEventListener("click", () => {
+    .getElementById("btnEstudiantes")
+    .addEventListener(
+        "click",
+        () => {
 
-    cargarPagina("salidas");
+            cargarPagina(
+                "estudiantes"
+            );
 
-});
+        }
+    );
 
+
+// ==========================
+// SALIDAS
+// ==========================
+
+document
+    .getElementById("btnSalidas")
+    .addEventListener(
+        "click",
+        () => {
+
+            cargarPagina(
+                "salidas"
+            );
+
+        }
+    );
 
 
 // ==========================
@@ -182,47 +262,131 @@ document
 // ==========================
 
 document
-.getElementById("btnHistorial")
-.addEventListener("click", () => {
+    .getElementById("btnHistorial")
+    .addEventListener(
+        "click",
+        () => {
 
-    cargarPagina("historial");
+            cargarPagina(
+                "historial"
+            );
 
-});
-
-
-
-document
-.getElementById("btnMensajes")
-.addEventListener("click", () => {
-
-    cargarPagina("mensajes");
-
-});
-
-
-
-document
-.getElementById("btnReportes")
-.addEventListener("click", () => {
-
-    cargarPagina("reportes");
-
-});
-
-
-
-document
-.getElementById("btnConfiguracion")
-.addEventListener("click", () => {
-
-    cargarPagina("configuracion");
-
-});
-
+        }
+    );
 
 
 // ==========================
-// INICIO
+// INCIDENCIAS
 // ==========================
 
-cargarPagina("inicio");
+document
+    .getElementById("btnIncidencias")
+    .addEventListener(
+        "click",
+        () => {
+
+            cargarPagina(
+                "incidencias"
+            );
+
+        }
+    );
+
+
+// ==========================
+// HISTORIAL INCIDENCIAS
+// ==========================
+
+document
+    .getElementById("btnHistorialIncidencias")
+    .addEventListener(
+        "click",
+        () => {
+
+            cargarPagina(
+                "historialIncidencias"
+            );
+
+        }
+    );
+
+
+// ==========================
+// REPORTE INCIDENCIAS
+// ==========================
+
+document
+    .getElementById("btnReporteIncidencias")
+    .addEventListener(
+        "click",
+        () => {
+
+            cargarPagina(
+                "reporteIncidencias"
+            );
+
+        }
+    );
+
+
+// ==========================
+// MENSAJES
+// ==========================
+
+document
+    .getElementById("btnMensajes")
+    .addEventListener(
+        "click",
+        () => {
+
+            cargarPagina(
+                "mensajes"
+            );
+
+        }
+    );
+
+
+// ==========================
+// REPORTES
+// ==========================
+
+document
+    .getElementById("btnReportes")
+    .addEventListener(
+        "click",
+        () => {
+
+            cargarPagina(
+                "reportes"
+            );
+
+        }
+    );
+
+
+// ==========================
+// CONFIGURACIÓN
+// ==========================
+
+document
+    .getElementById("btnConfiguracion")
+    .addEventListener(
+        "click",
+        () => {
+
+            cargarPagina(
+                "configuracion"
+            );
+
+        }
+    );
+
+
+// ==========================
+// CARGAR INICIO
+// ==========================
+
+cargarPagina(
+    "inicio"
+);

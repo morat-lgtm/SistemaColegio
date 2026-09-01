@@ -1,107 +1,123 @@
 <!DOCTYPE html>
 <html lang="es">
 
-
 <head>
 
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <title>SGCE</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-<title>SGCE Móvil</title>
-
-
-
-<link rel="stylesheet" href="css/estilo.css">
-
+    <link rel="stylesheet" href="/assets/css/dashboard.css">
 
 </head>
-
 
 
 <body>
 
 
-
-<div class="panel">
-
+<div class="container">
 
 
-<h1>
-SGCE
-</h1>
+    <aside class="sidebar">
+
+
+        <h2>SGCE</h2>
+
+
+        <button id="btnInicio">
+            🏠 Inicio
+        </button>
+
+
+        <button id="btnEstudiantes">
+            👨‍🎓 Estudiantes
+        </button>
+
+
+        <button id="btnSalidas">
+            🚻 Salidas
+        </button>
+
+
+        <button id="btnHistorial">
+            📋 Historial
+        </button>
+
+
+        <button id="btnIncidencias">
+            📝 Incidencias
+        </button>
+
+
+        <button id="btnHistorialIncidencias">
+            📋 Historial Incidencias
+        </button>
+
+
+        <button id="btnReportes">
+            📊 Reportes
+        </button>
+
+
+        <button id="btnReporteIncidencias">
+            📊 Reporte Incidencias
+        </button>
+
+
+        <button id="btnMensajes">
+            🔔 Mensajes
+        </button>
+
+
+        <button id="btnConfiguracion">
+            ⚙ Configuración
+        </button>
+
+
+    </aside>
 
 
 
-<h2 id="nombreUsuario">
-Bienvenido
-</h2>
+    <main class="content">
+
+
+        <header class="topbar">
+
+
+            <div>
+
+                <h2>
+                    Sistema de Gestión y Comunicación Escolar
+                </h2>
+
+            </div>
+
+
+            <div id="lblHora"></div>
+
+
+        </header>
 
 
 
+        <section id="contenido">
 
-
-<div class="menu">
-
-
-
-<button id="btnSalida">
-
-🚪 Registrar salida
-
-</button>
+        </section>
 
 
 
-
-<button id="btnRetorno">
-
-🔄 Registrar retorno
-
-</button>
-
-
-
-
-<button id="btnHistorial">
-
-📋 Historial
-
-</button>
-
-
-
-
-<button id="btnCerrarSesion">
-
-🚪 Cerrar sesión
-
-</button>
-
-
-
+    </main>
 
 
 </div>
 
 
 
-
-</div>
-
-
-
-
-
-<script src="js/principal.js"></script>
-
-
+<script src="/assets/js/dashboard.js"></script>
 
 
 </body>
-
 
 </html>

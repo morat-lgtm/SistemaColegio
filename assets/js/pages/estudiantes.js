@@ -1,253 +1,290 @@
 (() => {
 
-console.log("Módulo Estudiantes iniciado.");
+    console.log("Módulo Estudiantes iniciado.");
 
 
+    const lista =
+        document.getElementById("listaEstudiantes");
 
-const lista =
-document.getElementById("listaEstudiantes");
-
-const botonImportar =
-document.getElementById("btnImportar");
-
+    const botonImportar =
+        document.getElementById("btnImportar");
 
 
-if (!lista || !botonImportar) {
+    if (!lista) {
 
-    return;
+        console.error(
+            "No se encontró #listaEstudiantes."
+        );
 
-}
+        return;
 
-
-
-cargarEstudiantes();
-
-
-
-botonImportar.addEventListener(
-"click",
-async () => {
-
-
-
-    const resultado =
-        await window.electronAPI.importarEstudiantes();
-
-
-
-    if (!resultado) return;
-
-
-
-    alert(
-
-        `Importados: ${resultado.importados}\n` +
-
-        `Omitidos: ${resultado.omitidos}`
-
-    );
-
+    }
 
 
     cargarEstudiantes();
 
 
-});
+    // ==========================
+    // IMPORTAR EXCEL
+    // ==========================
 
+    if (botonImportar) {
 
+        botonImportar.addEventListener(
+            "click",
+            async () => {
 
-
-
-// ==========================
-// CARGAR ESTUDIANTES
-// ==========================
-
-async function cargarEstudiantes() {
-
-
-    const sesion =
-        await window.electronAPI.getSession();
-
-
-
-    if (!sesion) {
-
-        console.log(
-            "No existe sesión."
-        );
-
-        return;
-
-    }
-
-
-
-
-
-    let estudiantes = [];
-
-
-
-
-
-    const rolesGenerales = [
-
-
-        "Administrador",
-
-        "Dirección",
-
-        "Subdirección",
-
-        "Secretaría",
-
-        "Coordinación Académica",
-
-        "Convivencia Escolar",
-
-        "Psicología",
-
-        "Enfermería"
-
-
-    ];
-
-
-
-
-
-    if (
-        rolesGenerales.includes(
-            sesion.rol
-        )
-    ) {
-
-
-        console.log(
-            "Usuario con acceso general:",
-            sesion.rol
-        );
-
-
-
-        estudiantes =
-            await window.electronAPI.getStudents();
-
-
-
-    } else {
-
-
-        const workstation =
-            await window.electronAPI.getWorkstation();
-
-
-
-        if (
-            workstation &&
-            workstation.ambiente_id
-        ) {
-
-
-            console.log(
-                "Usuario limitado al ambiente:",
-                workstation.ambiente_id
-            );
-
-
-
-            estudiantes =
-                await window.electronAPI
-                .getStudentsByAmbiente(
-                    workstation.ambiente_id
+                console.log(
+                    "Importar Excel seleccionado."
                 );
 
 
+                alert(
+                    "La importación de Excel la conectaremos en el siguiente paso."
+                );
+
+            }
+        );
+
+    }
+
+
+    // ==========================
+    // CARGAR ESTUDIANTES
+    // ==========================
+
+    async function cargarEstudiantes() {
+
+        try {
+
+            console.log(
+                "Obteniendo configuración de la computadora..."
+            );
+
+
+            // ==========================
+            // 1. OBTENER WORKSTATION
+            // ==========================
+
+            const respuestaWorkstation =
+                await fetch(
+                    "/api/workstation"
+                );
+
+
+            if (!respuestaWorkstation.ok) {
+
+                throw new Error(
+                    "No se pudo obtener la configuración de la computadora."
+                );
+
+            }
+
+
+            const workstation =
+                await respuestaWorkstation.json();
+
+
+            console.log(
+                "WORKSTATION:",
+                workstation
+            );
+
+
+            // ==========================
+            // 2. VERIFICAR AMBIENTE
+            // ==========================
+
+            if (
+                !workstation ||
+                !workstation.ambiente_id
+            ) {
+
+                lista.innerHTML = `
+
+                    <p>
+                        No hay un ambiente configurado
+                        para esta computadora.
+                    </p>
+
+                `;
+
+                return;
+
+            }
+
+
+            const ambienteId =
+                workstation.ambiente_id;
+
+
+            console.log(
+                "Ambiente actual:",
+                ambienteId
+            );
+
+
+            // ==========================
+            // 3. OBTENER ESTUDIANTES
+            // ==========================
+
+            const respuestaEstudiantes =
+                await fetch(
+                    `/api/students/ambiente/${ambienteId}`
+                );
+
+
+            if (!respuestaEstudiantes.ok) {
+
+                throw new Error(
+                    "No se pudieron obtener los estudiantes."
+                );
+
+            }
+
+
+            const estudiantes =
+                await respuestaEstudiantes.json();
+
+
+            console.log(
+                "ESTUDIANTES:",
+                estudiantes
+            );
+
+
+            // ==========================
+            // 4. VERIFICAR RESULTADOS
+            // ==========================
+
+            if (
+                !Array.isArray(estudiantes) ||
+                estudiantes.length === 0
+            ) {
+
+                lista.innerHTML = `
+
+                    <p>
+                        No hay estudiantes registrados
+                        en este ambiente.
+                    </p>
+
+                `;
+
+                return;
+
+            }
+
+
+            // ==========================
+            // 5. MOSTRAR ESTUDIANTES
+            // ==========================
+
+            lista.innerHTML = "";
+
+
+            estudiantes.forEach(
+                estudiante => {
+
+
+                    const tarjeta =
+                        document.createElement("div");
+
+
+                    tarjeta.className =
+                        "student-card";
+
+
+                    tarjeta.innerHTML = `
+
+                        <h3>
+                            ${escaparHTML(
+                                estudiante.apellidos || ""
+                            )}
+                        </h3>
+
+
+                        <p>
+                            ${escaparHTML(
+                                estudiante.nombres || ""
+                            )}
+                        </p>
+
+
+                        <small>
+
+                            ${escaparHTML(
+                                estudiante.grado || ""
+                            )}°
+
+                            ${escaparHTML(
+                                estudiante.nivel || ""
+                            )}
+
+                            -
+
+                            Sección
+
+                            ${escaparHTML(
+                                estudiante.seccion || ""
+                            )}
+
+                        </small>
+
+                    `;
+
+
+                    lista.appendChild(
+                        tarjeta
+                    );
+
+
+                }
+            );
+
+
+            console.log(
+                "Estudiantes cargados correctamente:",
+                estudiantes.length
+            );
+
+
+        } catch (error) {
+
+
+            console.error(
+                "Error cargando estudiantes:",
+                error
+            );
+
+
+            lista.innerHTML = `
+
+                <p>
+                    Error cargando estudiantes.
+                </p>
+
+            `;
+
         }
 
-
     }
 
 
+    // ==========================
+    // ESCAPAR HTML
+    // ==========================
 
+    function escaparHTML(valor) {
 
-
-
-    if (estudiantes.length === 0) {
-
-
-        lista.innerHTML = `
-
-            <p>
-                No hay estudiantes registrados.
-            </p>
-
-        `;
-
-
-        return;
-
+        return String(valor)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
 
     }
-
-
-
-
-
-    lista.innerHTML = "";
-
-
-
-
-
-    estudiantes.forEach(estudiante => {
-
-
-
-        lista.innerHTML += `
-
-
-        <div class="student-card">
-
-
-            <h3>
-                ${estudiante.apellidos}
-            </h3>
-
-
-
-            <p>
-                ${estudiante.nombres}
-            </p>
-
-
-
-            <small>
-
-                ${estudiante.grado}° ${estudiante.nivel}
-
-                -
-
-                Sección ${estudiante.seccion}
-
-
-            </small>
-
-
-
-        </div>
-
-
-        `;
-
-
-
-    });
-
-
-
-}
-
 
 
 })();

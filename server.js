@@ -105,11 +105,30 @@ app.use(
 // CLIENTE WEB
 // ==========================
 
+// Archivos públicos de la carpeta web
+
 app.use(
     express.static(
         path.join(
             __dirname,
             "web"
+        )
+    )
+);
+
+
+// ==========================
+// ASSETS
+// ==========================
+
+// CSS y JavaScript compartidos
+
+app.use(
+    "/assets",
+    express.static(
+        path.join(
+            __dirname,
+            "assets"
         )
     )
 );

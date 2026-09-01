@@ -1,59 +1,18 @@
 (() => {
 
-console.log("Módulo Historial iniciado.");
+    console.log("Módulo Historial iniciado.");
+
+    const tabla =
+        document.getElementById("tablaHistorial");
+
+    const buscar =
+        document.getElementById("txtBuscarHistorial");
 
 
-
-const tabla =
-document.getElementById("tablaHistorial");
-
-const buscar =
-document.getElementById("txtBuscarHistorial");
-
-
-
-if (!tabla) {
-
-    return;
-
-}
-
-
-
-let registros = [];
-
-
-
-
-
-// ==========================
-// INICIO
-// ==========================
-
-cargarHistorial();
-
-
-
-
-
-
-
-// ==========================
-// CARGAR HISTORIAL
-// ==========================
-
-async function cargarHistorial() {
-
-
-    const sesion =
-        await window.electronAPI.getSession();
-
-
-
-    if (!sesion) {
+    if (!tabla) {
 
         console.log(
-            "No existe sesión."
+            "Elemento tablaHistorial no encontrado."
         );
 
         return;
@@ -61,280 +20,402 @@ async function cargarHistorial() {
     }
 
 
+    let registros = [];
 
 
+    // ==========================
+    // INICIO
+    // ==========================
 
-    const rolesGenerales = [
-
-
-        "Administrador",
-
-        "Dirección",
-
-        "Subdirección",
-
-        "Secretaría",
-
-        "Coordinación Académica",
-
-        "Convivencia Escolar",
-
-        "Psicología",
-
-        "Enfermería"
+    cargarHistorial();
 
 
-    ];
+    // ==========================
+    // CARGAR HISTORIAL
+    // ==========================
 
+    async function cargarHistorial() {
 
-
-
-
-
-
-    if (
-        rolesGenerales.includes(
-            sesion.rol
-        )
-    ) {
-
-
-        console.log(
-            "Historial completo:",
-            sesion.rol
-        );
-
-
-
-        registros =
-            await window.electronAPI
-            .getHistorialSalidas();
-
-
-
-    } else {
-
-
-
-        const workstation =
-            await window.electronAPI
-            .getWorkstation();
-
-
-
-
-
-        if (!workstation) {
-
+        try {
 
             console.log(
-                "Equipo no configurado."
+                "Cargando historial de salidas..."
             );
 
 
-            return;
+            const respuesta =
+                await fetch(
+                    "/api/salidas/historial"
+                );
 
+
+            if (!respuesta.ok) {
+
+                throw new Error(
+                    `Error HTTP ${respuesta.status}`
+                );
+
+            }
+
+
+            registros =
+                await respuesta.json();
+
+
+            console.log(
+                "HISTORIAL CARGADO:",
+                registros
+            );
+
+
+            if (!Array.isArray(registros)) {
+
+                console.error(
+                    "El historial recibido no es un arreglo:",
+                    registros
+                );
+
+                registros = [];
+
+            }
+
+
+            mostrarHistorial(
+                registros
+            );
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error cargando historial:",
+                error
+            );
+
+
+            tabla.innerHTML = `
+
+                <div class="empty">
+
+                    <h3>
+                        Error cargando historial.
+                    </h3>
+
+                    <p>
+                        No se pudieron obtener
+                        las salidas registradas.
+                    </p>
+
+                </div>
+
+            `;
+
+        }
+
+    }
+
+
+    // ==========================
+    // MOSTRAR HISTORIAL
+    // ==========================
+
+    function mostrarHistorial(datos) {
+
+
+        if (
+            !datos ||
+            datos.length === 0
+        ) {
+
+            tabla.innerHTML = `
+
+                <div class="empty">
+
+                    <h3>
+                        No existen registros.
+                    </h3>
+
+                    <p>
+                        Aquí aparecerán las salidas registradas.
+                    </p>
+
+                </div>
+
+            `;
+
+            return;
 
         }
 
 
+        // ==========================
+        // PENDIENTES PRIMERO
+        // ==========================
+
+        const ordenados =
+            [...datos].sort(
+                (a, b) => {
+
+                    const aActiva =
+                        a.estado === "ACTIVA";
+
+                    const bActiva =
+                        b.estado === "ACTIVA";
 
 
+                    // Las activas van primero
+
+                    if (
+                        aActiva &&
+                        !bActiva
+                    ) {
+
+                        return -1;
+
+                    }
 
 
-        console.log(
-            "Historial por ambiente:",
-            workstation.ambiente_id
-        );
+                    if (
+                        !aActiva &&
+                        bActiva
+                    ) {
+
+                        return 1;
+
+                    }
 
 
+                    // Si tienen el mismo estado,
+                    // las más recientes primero
 
-        registros =
-            await window.electronAPI
-            .getHistorialSalidasByAmbiente(
-                workstation.ambiente_id
+                    return new Date(
+                        b.hora_salida
+                    ) -
+                    new Date(
+                        a.hora_salida
+                    );
+
+                }
             );
 
 
+        tabla.innerHTML = "";
+
+
+        ordenados.forEach(
+            salida => {
+
+
+                let claseEstado;
+
+                let textoEstado;
+
+
+                // ==========================
+                // ESTADO
+                // ==========================
+
+                if (
+                    salida.estado === "ACTIVA"
+                ) {
+
+                    claseEstado =
+                        "estado-activa";
+
+                    textoEstado =
+                        "🔴 Fuera del aula";
+
+                }
+                else {
+
+                    claseEstado =
+                        "estado-retornado";
+
+                    textoEstado =
+                        "🟢 Retornó al aula";
+
+                }
+
+
+                // ==========================
+                // TARJETA
+                // ==========================
+
+                tabla.innerHTML += `
+
+                    <div class="historial-card ${claseEstado}">
+
+                        <h3>
+
+                            ${salida.apellidos ?? ""}
+                            ${salida.nombres ?? ""}
+
+                        </h3>
+
+
+                        <p>
+
+                            📚
+
+                            ${salida.grado ?? ""}°
+
+                            ${salida.nivel ?? ""}
+
+                            -
+
+                            Sección
+                            ${salida.seccion ?? ""}
+
+                        </p>
+
+
+                        <p>
+
+                            🚻 Motivo:
+
+                            ${salida.motivo ?? ""}
+
+                        </p>
+
+
+                        <p>
+
+                            👤 Registrado por:
+
+                            ${salida.usuario ?? ""}
+
+                        </p>
+
+
+                        ${
+                            salida.observacion
+                            ?
+                            `
+                            <p>
+                                📝 Observación:
+
+                                ${salida.observacion}
+                            </p>
+                            `
+                            :
+                            ""
+                        }
+
+
+                        <div class="estado">
+
+                            ${textoEstado}
+
+                        </div>
+
+
+                        <small>
+
+                            🕒 Salida:
+
+                            ${salida.hora_salida ?? ""}
+
+                            <br>
+
+
+                            🔄 Retorno:
+
+                            ${
+                                salida.hora_regreso
+                                ??
+                                "Pendiente"
+                            }
+
+                        </small>
+
+
+                    </div>
+
+                `;
+
+            }
+        );
 
     }
 
 
+    // ==========================
+    // BUSCAR
+    // ==========================
 
+    if (buscar) {
 
+        buscar.oninput = () => {
 
 
-    mostrarHistorial(registros);
+            const texto =
+                buscar.value
+                    .toLowerCase()
+                    .trim();
 
 
+            const filtrados =
+                registros.filter(
+                    salida => {
 
-}
 
+                        const nombreCompleto =
 
+                            `
+                            ${salida.apellidos ?? ""}
+                            ${salida.nombres ?? ""}
+                            `
+                            .toLowerCase();
 
 
+                        const coincideNombre =
+                            nombreCompleto.includes(
+                                texto
+                            );
 
 
+                        const coincideMotivo =
+                            (
+                                salida.motivo ?? ""
+                            )
+                            .toLowerCase()
+                            .includes(
+                                texto
+                            );
 
 
-// ==========================
-// MOSTRAR HISTORIAL
-// ==========================
+                        const coincideObservacion =
+                            (
+                                salida.observacion ?? ""
+                            )
+                            .toLowerCase()
+                            .includes(
+                                texto
+                            );
 
-function mostrarHistorial(datos) {
 
+                        return (
 
-    if (datos.length === 0) {
+                            coincideNombre ||
 
+                            coincideMotivo ||
 
-        tabla.innerHTML = `
+                            coincideObservacion
 
-            <div class="empty">
+                        );
 
-                <h3>
-                    No existen registros.
-                </h3>
+                    }
+                );
 
-            </div>
 
-        `;
-
-
-        return;
-
-
-    }
-
-
-
-
-
-
-    tabla.innerHTML = "";
-
-
-
-
-
-    datos.forEach(salida => {
-
-
-        tabla.innerHTML += `
-
-
-        <div class="student-card">
-
-
-            <h3>
-
-                ${salida.apellidos}
-                ${salida.nombres}
-
-            </h3>
-
-
-
-            <p>
-
-                🚻 Motivo:
-                ${salida.motivo}
-
-            </p>
-
-
-
-            <small>
-
-
-                🕒 Salida:
-                ${salida.hora_salida}
-
-
-                <br>
-
-
-                🔄 Retorno:
-                ${salida.hora_regreso ?? "Pendiente"}
-
-
-                <br>
-
-
-                Estado:
-                ${salida.estado}
-
-
-            </small>
-
-
-
-        </div>
-
-
-        `;
-
-
-    });
-
-
-
-}
-
-
-
-
-
-
-
-
-
-// ==========================
-// BUSCAR
-// ==========================
-
-if (buscar) {
-
-
-    buscar.oninput = () => {
-
-
-
-        const texto =
-            buscar.value
-            .toLowerCase()
-            .trim();
-
-
-
-
-
-        const filtrados =
-            registros.filter(e =>
-
-
-
-                `${e.apellidos} ${e.nombres}`
-                .toLowerCase()
-                .includes(texto)
-
-
-
+            mostrarHistorial(
+                filtrados
             );
 
+        };
 
-
-
-        mostrarHistorial(
-            filtrados
-        );
-
-
-
-    };
-
-
-}
-
+    }
 
 
 })();

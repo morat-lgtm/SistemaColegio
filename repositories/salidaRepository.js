@@ -303,7 +303,14 @@ class SalidaRepository {
                 WHERE s.hora_salida::date =
                       CURRENT_DATE
 
-                ORDER BY s.hora_salida DESC
+                ORDER BY
+
+                    CASE
+                        WHEN s.estado = 'ACTIVA' THEN 0
+                        ELSE 1
+                    END,
+
+                    s.hora_salida DESC
 
             `);
 
@@ -369,7 +376,14 @@ class SalidaRepository {
                 AND s.hora_salida::date =
                     CURRENT_DATE
 
-                ORDER BY s.hora_salida DESC
+                ORDER BY
+
+                    CASE
+                        WHEN s.estado = 'ACTIVA' THEN 0
+                        ELSE 1
+                    END,
+
+                    s.hora_salida DESC
 
             `,
 
