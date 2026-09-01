@@ -206,3 +206,71 @@ body {
 
     font-size: 14px;
 }
+/* ==========================
+   RESPONSIVE - CELULARES
+========================== */
+
+@media (max-width: 480px) {
+
+    .login-container {
+
+        padding: 15px;
+
+    }
+
+
+    .login-card {
+
+        padding: 25px 20px;
+
+        border-radius: 12px;
+
+    }
+
+
+    .logo {
+
+        margin-bottom: 25px;
+
+    }
+
+
+    .logo h1 {
+
+        font-size: 34px;
+
+    }
+
+
+    .logo p {
+
+        font-size: 13px;
+
+    }
+
+
+    .campo {
+
+        margin-bottom: 16px;
+
+    }
+
+
+    .campo input {
+
+        padding: 12px;
+
+        font-size: 16px;
+
+    }
+
+
+    #btnIngresar {
+
+        padding: 13px;
+
+        font-size: 16px;
+
+    }
+
+}

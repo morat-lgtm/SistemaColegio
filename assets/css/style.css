@@ -1,114 +1,111 @@
-body{
-
-    font-family: Arial;
-
-    text-align:center;
-
-    margin-top:100px;
-
-    background:#f2f2f2;
-
-}
-
-
 /* ==========================
    HISTORIAL SALIDAS
 ========================== */
 
+.historial-card {
+    background: white;
 
-.historial-card{
+    border-radius: 15px;
 
+    padding: 18px;
 
-    background:white;
-
-
-    border-radius:15px;
-
-
-    padding:18px;
-
-
-    margin-bottom:18px;
-
+    margin-bottom: 18px;
 
     box-shadow:
-    0 3px 10px rgba(0,0,0,0.15);
+        0 3px 10px rgba(0, 0, 0, 0.15);
 
+    border-left: 10px solid #999;
 
-    border-left:10px solid #999;
-
-
+    width: 100%;
 }
 
 
+/* ==========================
+   ESTADO ACTIVA
+========================== */
 
-
-.estado-activa{
-
-
-    border-left-color:red;
-
-
+.estado-activa {
+    border-left-color: red;
 }
 
 
+/* ==========================
+   ESTADO RETORNADO
+========================== */
 
-
-.estado-retornado{
-
-
-    border-left-color:green;
-
-
+.estado-retornado {
+    border-left-color: green;
 }
 
 
+/* ==========================
+   ETIQUETA ESTADO
+========================== */
 
+.estado {
+    margin-top: 10px;
 
-.estado{
+    padding: 8px;
 
+    border-radius: 8px;
 
-    margin-top:10px;
+    font-weight: bold;
 
-
-    padding:8px;
-
-
-    border-radius:8px;
-
-
-    font-weight:bold;
-
-
-    text-align:center;
-
-
+    text-align: center;
 }
 
 
+/* ==========================
+   ESTADO ACTIVO
+========================== */
 
+.estado-activa .estado {
+    background: #ffdada;
 
-.estado-activa .estado{
-
-
-    background:#ffdada;
-
-
-    color:#b00000;
-
-
+    color: #b00000;
 }
 
 
+/* ==========================
+   ESTADO RETORNADO
+========================== */
+
+.estado-retornado .estado {
+    background: #d9ffd9;
+
+    color: #006600;
+}
 
 
-.estado-retornado .estado{
+/* ==========================
+   RESPONSIVE
+   CELULARES
+========================== */
+
+@media (max-width: 600px) {
+
+    .historial-card {
+
+        padding: 14px;
+
+        margin-bottom: 12px;
+
+        border-left-width: 6px;
+
+        border-radius: 10px;
+
+        box-shadow:
+            0 2px 7px rgba(0, 0, 0, 0.12);
+
+    }
 
 
-    background:#d9ffd9;
+    .estado {
 
+        font-size: 14px;
 
-    color:#006600;
+        padding: 7px;
 
+    }
 
 }

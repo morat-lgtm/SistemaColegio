@@ -917,3 +917,495 @@ button{
     margin:8px 0;
 
 }
+/* ==========================================================
+   RESPONSIVE - TABLETS Y CELULARES
+   ========================================================== */
+
+
+/* ==========================
+   TABLETS
+   ========================== */
+
+@media (max-width: 900px) {
+
+    .sidebar {
+
+        width: 200px;
+        min-width: 200px;
+
+        padding: 15px;
+
+    }
+
+
+    .sidebar button {
+
+        font-size: 14px;
+        padding: 11px 8px;
+
+    }
+
+
+    .topbar {
+
+        padding: 15px;
+
+    }
+
+
+    .topbar h2 {
+
+        font-size: 18px;
+
+    }
+
+
+    #contenido {
+
+        padding: 15px;
+
+    }
+
+
+    .card {
+
+        padding: 18px;
+
+    }
+
+}
+
+
+/* ==========================
+   CELULARES
+   ========================== */
+
+@media (max-width: 600px) {
+
+
+    html,
+    body {
+
+        width: 100%;
+        height: 100%;
+
+        overflow: hidden;
+
+    }
+
+
+    /* ==========================
+       CONTENEDOR
+       ========================== */
+
+    .container {
+
+        display: block;
+
+        width: 100%;
+        height: 100vh;
+
+        min-width: 0;
+
+    }
+
+
+    /* ==========================
+       SIDEBAR
+       ========================== */
+
+    .sidebar {
+
+        width: 100%;
+        min-width: 0;
+
+        height: auto;
+
+        padding: 10px;
+
+        overflow: visible;
+
+    }
+
+
+    .sidebar h2 {
+
+        margin: 5px 0 10px 0;
+
+        font-size: 22px;
+
+    }
+
+
+    .sidebar button {
+
+        display: inline-block;
+
+        width: calc(50% - 6px);
+
+        margin: 3px;
+
+        padding: 10px 6px;
+
+        font-size: 13px;
+
+    }
+
+
+    /* ==========================
+       CONTENIDO
+       ========================== */
+
+    .content {
+
+        width: 100%;
+        height: calc(100vh - 150px);
+
+        min-width: 0;
+
+    }
+
+
+    /* ==========================
+       BARRA SUPERIOR
+       ========================== */
+
+    .topbar {
+
+        height: auto;
+        min-height: 55px;
+
+        padding: 10px;
+
+        gap: 8px;
+
+    }
+
+
+    .topbar h2 {
+
+        margin: 0;
+
+        font-size: 15px;
+
+        line-height: 1.2;
+
+    }
+
+
+    #lblHora {
+
+        font-size: 13px;
+
+        white-space: nowrap;
+
+    }
+
+
+    /* ==========================
+       CONTENIDO DINÁMICO
+       ========================== */
+
+    #contenido {
+
+        width: 100%;
+
+        padding: 12px;
+
+        overflow-x: hidden;
+        overflow-y: auto;
+
+    }
+
+
+    /* ==========================
+       TARJETAS
+       ========================== */
+
+    .card,
+    .inicio-header,
+    .inicio-card,
+    .historial-card,
+    .salida-card {
+
+        width: 100%;
+
+        padding: 15px;
+
+        margin-bottom: 12px;
+
+        border-radius: 10px;
+
+    }
+
+
+    .inicio-header h1 {
+
+        font-size: 23px;
+
+    }
+
+
+    .inicio-header p {
+
+        font-size: 15px;
+
+    }
+
+
+    .inicio-card h2 {
+
+        font-size: 20px;
+
+    }
+
+
+    /* ==========================
+       ESTUDIANTES
+       ========================== */
+
+    .student-card {
+
+        width: 100%;
+
+        padding: 13px;
+
+    }
+
+
+    .student-card h3 {
+
+        font-size: 17px;
+
+    }
+
+
+    /* ==========================
+       FORMULARIOS
+       ========================== */
+
+    input[type="text"],
+    input[type="search"],
+    input[type="date"],
+    input[type="time"],
+    select,
+    textarea {
+
+        width: 100% !important;
+
+        max-width: none !important;
+
+        box-sizing: border-box;
+
+    }
+
+
+    #txtBuscarSalida {
+
+        width: 100%;
+
+        max-width: none;
+
+    }
+
+
+    #cmbMotivo {
+
+        width: 100%;
+
+        max-width: none;
+
+    }
+
+
+    #txtObservacion {
+
+        width: 100%;
+
+        max-width: none;
+
+    }
+
+
+    /* ==========================
+       BOTONES
+       ========================== */
+
+    #btnRegistrarSalida,
+    #btnRegistrarIncidencia,
+    #btnConsultarReporteIncidencia,
+    #btnActualizarIncidencias {
+
+        width: 100%;
+
+        margin: 10px 0 0 0;
+
+        padding: 13px;
+
+    }
+
+
+    button {
+
+        max-width: 100%;
+
+    }
+
+
+    /* ==========================
+       AUTOCOMPLETADO
+       ========================== */
+
+    #resultadoEstudiantes,
+    .resultado-estudiantes {
+
+        width: 100%;
+
+        max-width: none;
+
+    }
+
+
+    /* ==========================
+       TABLAS
+       ========================== */
+
+    #resultadoReporteIncidenciaFinal,
+    #resultadoHistorialIncidencias {
+
+        width: 100%;
+
+        max-width: 100%;
+
+        overflow-x: auto;
+
+        -webkit-overflow-scrolling: touch;
+
+    }
+
+
+    .tabla {
+
+        min-width: 700px;
+
+    }
+
+
+    #resultadoHistorialIncidencias table {
+
+        min-width: 800px;
+
+    }
+
+
+    /* ==========================
+       HISTORIAL
+       ========================== */
+
+    .historial-card {
+
+        border-left-width: 6px;
+
+    }
+
+
+    .historial-card h3 {
+
+        font-size: 17px;
+
+    }
+
+
+    .estado {
+
+        font-size: 14px;
+
+    }
+
+
+    /* ==========================
+       SALIDAS ACTIVAS
+       ========================== */
+
+    .salida-card {
+
+        border-left-width: 6px;
+
+    }
+
+
+    .salida-card h3 {
+
+        font-size: 17px;
+
+    }
+
+
+    .btn-retorno {
+
+        width: 100%;
+
+        padding: 13px;
+
+    }
+
+}
+
+
+/* ==========================
+   CELULARES MUY PEQUEÑOS
+   ========================== */
+
+@media (max-width: 400px) {
+
+
+    .sidebar button {
+
+        width: 100%;
+
+        margin: 3px 0;
+
+    }
+
+
+    .content {
+
+        height: calc(100vh - 390px);
+
+    }
+
+
+    .topbar {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+    }
+
+
+    #lblHora {
+
+        align-self: flex-end;
+
+    }
+
+
+    #contenido {
+
+        padding: 8px;
+
+    }
+
+
+    .card,
+    .inicio-header,
+    .inicio-card,
+    .historial-card,
+    .salida-card {
+
+        padding: 12px;
+
+    }
+
+}
