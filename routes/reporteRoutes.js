@@ -3,6 +3,9 @@ const express = require("express");
 const reporteController =
     require("../controllers/reporteController");
 
+const pdfService =
+    require("../services/pdfService");
+
 
 const router = express.Router();
 
@@ -135,7 +138,88 @@ router.get(
 
 
 // ==========================
-// EXPORTAR
+// EXPORTAR PDF
 // ==========================
 
-module.exports = router;
+router.post(
+    "/exportar-pdf",
+    async (req, res) => {
+
+        try {
+
+            console.log(
+                "REPORTE ROUTES: solicitud de exportación PDF"
+            );
+
+
+            const html =
+                req.body.html;
+
+
+            if (!html) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    error:
+                        "No se recibió contenido HTML."
+
+                });
+
+            }
+
+
+            const pdf =
+                await pdfService.generarPDF(
+                    html
+                );
+
+
+            res.setHeader(
+                "Content-Type",
+                "application/pdf"
+            );
+
+
+            res.setHeader(
+                "Content-Disposition",
+                "attachment; filename=reporte.pdf"
+            );
+
+
+            res.send(
+                pdf
+            );
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error exportando PDF:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                error:
+                    error.message
+
+            });
+
+        }
+
+    }
+);
+
+
+// ==========================
+// EXPORTAR ROUTER
+// ==========================
+
+module.exports =
+    router;

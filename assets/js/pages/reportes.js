@@ -45,6 +45,7 @@ console.log("Módulo Reportes cargado.");
         );
 
         return;
+
     }
 
 
@@ -63,7 +64,6 @@ console.log("Módulo Reportes cargado.");
     let datosRanking = [];
 
 
-
     // =====================================================
     // INICIO
     // =====================================================
@@ -75,7 +75,6 @@ console.log("Módulo Reportes cargado.");
     cargarRanking();
 
 
-
     // =====================================================
     // COLOCAR HISTORIAL ANTES DEL RANKING
     // =====================================================
@@ -83,10 +82,14 @@ console.log("Módulo Reportes cargado.");
     function colocarHistorialAntesDelRanking() {
 
         const contenedorRanking =
-            document.getElementById("rankingSalidas");
+            document.getElementById(
+                "rankingSalidas"
+            );
 
         const contenedorResultado =
-            document.getElementById("resultadoReporte");
+            document.getElementById(
+                "resultadoReporte"
+            );
 
 
         if (
@@ -105,6 +108,7 @@ console.log("Módulo Reportes cargado.");
                     contenedorRanking
                 );
 
+
                 console.log(
                     "REPORTES: Historial colocado antes del ranking."
                 );
@@ -114,7 +118,6 @@ console.log("Módulo Reportes cargado.");
         }
 
     }
-
 
 
     // =====================================================
@@ -131,8 +134,7 @@ console.log("Módulo Reportes cargado.");
 
 
             // =================================================
-            // OPCIÓN 1
-            // ELECTRON API
+            // ELECTRON
             // =================================================
 
             if (
@@ -165,109 +167,59 @@ console.log("Módulo Reportes cargado.");
 
 
                 return;
+
             }
 
 
-
             // =================================================
-            // OPCIÓN 2
-            // SERVIDOR
+            // SERVIDOR WEB
             // =================================================
-
-            console.warn(
-                "REPORTES: electronAPI.getStudents no disponible."
-            );
-
 
             console.log(
-                "REPORTES: intentando cargar estudiantes desde API..."
+                "REPORTES: cargando estudiantes desde API..."
             );
 
 
-            const urls = [
-
-                "/api/estudiantes",
-
-                "/api/students"
-
-            ];
+            const respuesta =
+                await fetch(
+                    "/api/students"
+                );
 
 
-            let cargado = false;
-
-
-            for (const url of urls) {
-
-                try {
-
-                    console.log(
-                        "REPORTES: probando:",
-                        url
-                    );
-
-
-                    const respuesta =
-                        await fetch(url);
-
-
-                    if (!respuesta.ok) {
-
-                        console.warn(
-                            "REPORTES:",
-                            url,
-                            "respondió",
-                            respuesta.status
-                        );
-
-                        continue;
-                    }
-
-
-                    const datos =
-                        await respuesta.json();
-
-
-                    if (Array.isArray(datos)) {
-
-                        estudiantes = datos;
-
-                        cargado = true;
-
-
-                        console.log(
-                            "REPORTES: estudiantes cargados desde:",
-                            url,
-                            estudiantes.length
-                        );
-
-
-                        break;
-                    }
-
-
-                } catch (error) {
-
-                    console.warn(
-                        "REPORTES: error con",
-                        url,
-                        error
-                    );
-
-                }
-
-            }
-
-
-            if (!cargado) {
+            if (!respuesta.ok) {
 
                 throw new Error(
-                    "No fue posible cargar la lista de estudiantes."
+                    `Error HTTP ${respuesta.status}`
                 );
 
             }
 
 
-        } catch (error) {
+            const datos =
+                await respuesta.json();
+
+
+            if (!Array.isArray(datos)) {
+
+                throw new Error(
+                    "La API no devolvió un arreglo."
+                );
+
+            }
+
+
+            estudiantes =
+                datos;
+
+
+            console.log(
+                "REPORTES: estudiantes cargados:",
+                estudiantes.length
+            );
+
+
+        }
+        catch (error) {
 
             console.error(
                 "REPORTES: Error cargando estudiantes:",
@@ -290,7 +242,6 @@ console.log("Módulo Reportes cargado.");
     }
 
 
-
     // =====================================================
     // BUSCAR ESTUDIANTE
     // =====================================================
@@ -303,13 +254,12 @@ console.log("Módulo Reportes cargado.");
                 .trim();
 
 
-        // No borrar el estudiante consultado
-        // hasta que realmente se haga una nueva consulta.
-
-        estudianteSeleccionado = null;
+        estudianteSeleccionado =
+            null;
 
 
-        listaEstudiantes.innerHTML = "";
+        listaEstudiantes.innerHTML =
+            "";
 
 
         // =================================================
@@ -364,57 +314,58 @@ console.log("Módulo Reportes cargado.");
         // =================================================
 
         const encontrados =
-            estudiantes.filter(estudiante => {
+            estudiantes.filter(
+                estudiante => {
 
-
-                const nombres =
-                    String(
-                        estudiante.nombres || ""
-                    )
-                    .toLowerCase();
-
-
-                const apellidos =
-                    String(
-                        estudiante.apellidos || ""
-                    )
-                    .toLowerCase();
-
-
-                const nombreCompleto =
-                    `${apellidos} ${nombres}`
+                    const nombres =
+                        String(
+                            estudiante.nombres || ""
+                        )
                         .toLowerCase();
 
 
-                const codigo =
-                    String(
-                        estudiante.codigo || ""
-                    )
-                    .toLowerCase();
+                    const apellidos =
+                        String(
+                            estudiante.apellidos || ""
+                        )
+                        .toLowerCase();
 
 
-                const dni =
-                    String(
-                        estudiante.dni || ""
-                    )
-                    .toLowerCase();
+                    const nombreCompleto =
+                        `${apellidos} ${nombres}`
+                            .toLowerCase();
 
 
-                return (
+                    const codigo =
+                        String(
+                            estudiante.codigo || ""
+                        )
+                        .toLowerCase();
 
-                    nombreCompleto.includes(texto) ||
 
-                    nombres.includes(texto) ||
+                    const dni =
+                        String(
+                            estudiante.dni || ""
+                        )
+                        .toLowerCase();
 
-                    apellidos.includes(texto) ||
 
-                    codigo.includes(texto) ||
+                    return (
 
-                    dni.includes(texto)
+                        nombreCompleto.includes(texto) ||
 
-                );
+                        nombres.includes(texto) ||
 
-            });
+                        apellidos.includes(texto) ||
+
+                        codigo.includes(texto) ||
+
+                        dni.includes(texto)
+
+                    );
+
+                }
+            );
 
 
         console.log(
@@ -439,6 +390,7 @@ console.log("Módulo Reportes cargado.");
 
             `;
 
+
             return;
 
         }
@@ -450,81 +402,84 @@ console.log("Módulo Reportes cargado.");
 
         encontrados
             .slice(0, 15)
-            .forEach(estudiante => {
+            .forEach(
+                estudiante => {
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
 
 
-                const item =
-                    document.createElement("div");
+                    item.className =
+                        "resultado-estudiante";
 
 
-                item.className =
-                    "resultado-estudiante";
+                    item.dataset.id =
+                        estudiante.id;
 
 
-                item.dataset.id =
-                    estudiante.id;
+                    item.innerHTML = `
+
+                        <strong>
+
+                            ${estudiante.apellidos || ""}
+
+                            ${estudiante.nombres || ""}
+
+                        </strong>
+
+                        <br>
+
+                        <small>
+
+                            ${estudiante.grado || ""}
+
+                            ${estudiante.nivel || ""}
+
+                            -
+
+                            ${estudiante.seccion || ""}
+
+                        </small>
+
+                    `;
 
 
-                item.innerHTML = `
+                    // =================================================
+                    // SELECCIONAR
+                    // =================================================
 
-                    <strong>
+                    item.onclick = () => {
 
-                        ${estudiante.apellidos || ""}
-
-                        ${estudiante.nombres || ""}
-
-                    </strong>
-
-                    <br>
-
-                    <small>
-
-                        ${estudiante.grado || ""}
-
-                        ${estudiante.nivel || ""}
-
-                        -
-
-                        ${estudiante.seccion || ""}
-
-                    </small>
-
-                `;
+                        estudianteSeleccionado =
+                            estudiante;
 
 
-                // =================================================
-                // SELECCIONAR
-                // =================================================
-
-                item.onclick = () => {
+                        buscar.value =
+                            `${estudiante.apellidos || ""} ${estudiante.nombres || ""}`;
 
 
-                    estudianteSeleccionado =
-                        estudiante;
+                        listaEstudiantes.innerHTML =
+                            "";
 
 
-                    buscar.value =
-                        `${estudiante.apellidos || ""} ${estudiante.nombres || ""}`;
+                        console.log(
+                            "Estudiante seleccionado:",
+                            estudianteSeleccionado
+                        );
+
+                    };
 
 
-                    listaEstudiantes.innerHTML =
-                        "";
-
-
-                    console.log(
-                        "Estudiante seleccionado:",
-                        estudianteSeleccionado
+                    listaEstudiantes.appendChild(
+                        item
                     );
 
-                };
-
-
-                listaEstudiantes.appendChild(item);
-
-            });
+                }
+            );
 
     };
-
 
 
     // =====================================================
@@ -532,7 +487,6 @@ console.log("Módulo Reportes cargado.");
     // =====================================================
 
     btnConsultar.onclick = async () => {
-
 
         if (!estudianteSeleccionado) {
 
@@ -598,6 +552,10 @@ console.log("Módulo Reportes cargado.");
             );
 
 
+            // =================================================
+            // MOSTRAR REPORTE ENCIMA DEL RANKING
+            // =================================================
+
             mostrarReporte(
                 datosReporte
             );
@@ -607,10 +565,12 @@ console.log("Módulo Reportes cargado.");
             // ACTIVAR PDF
             // =================================================
 
-            btnPDF.disabled = false;
+            btnPDF.disabled =
+                false;
 
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.error(
                 "Error reporte:",
@@ -633,7 +593,6 @@ console.log("Módulo Reportes cargado.");
     };
 
 
-
     // =====================================================
     // FORMATEAR FECHA
     // =====================================================
@@ -651,8 +610,7 @@ console.log("Módulo Reportes cargado.");
             String(valor);
 
 
-        // ISO:
-        // 2026-09-01T15:33:31.122Z
+        // ISO
 
         if (texto.includes("T")) {
 
@@ -662,8 +620,7 @@ console.log("Módulo Reportes cargado.");
         }
 
 
-        // PostgreSQL:
-        // 2026-09-01 15:33:31
+        // PostgreSQL
 
         if (texto.includes(" ")) {
 
@@ -676,7 +633,6 @@ console.log("Módulo Reportes cargado.");
         return texto;
 
     }
-
 
 
     // =====================================================
@@ -738,13 +694,11 @@ console.log("Módulo Reportes cargado.");
     }
 
 
-
     // =====================================================
     // MOSTRAR REPORTE
     // =====================================================
 
     function mostrarReporte(datos) {
-
 
         // =================================================
         // SI NO HAY SALIDAS
@@ -772,7 +726,7 @@ console.log("Módulo Reportes cargado.");
 
                     <h3>
 
-                        📋 Historial de:
+                        Historial de:
 
                         ${nombre}
 
@@ -801,18 +755,21 @@ console.log("Módulo Reportes cargado.");
 
         const estudiante =
             estudianteConsultado ||
-            datos[0];
+            estudianteSeleccionado;
 
 
         const nombreCompleto =
-            `${estudiante.apellidos || ""} ${estudiante.nombres || ""}`;
+            estudiante
+                ? `${estudiante.apellidos || ""} ${estudiante.nombres || ""}`
+                : "Estudiante";
 
 
         resultado.innerHTML = `
 
             <h3>
 
-                📋 Historial de:
+                Historial de:
+
                 ${nombreCompleto}
 
             </h3>
@@ -859,62 +816,61 @@ console.log("Módulo Reportes cargado.");
                 <tbody>
 
                     ${
+                        datos.map(
+                            item => {
 
-                        datos.map(item => {
-
-
-                            const fecha =
-                                formatearFecha(
-                                    item.hora_salida
-                                );
-
-
-                            const horaSalida =
-                                formatearHora(
-                                    item.hora_salida
-                                ) || "-";
+                                const fecha =
+                                    formatearFecha(
+                                        item.hora_salida
+                                    );
 
 
-                            const horaRetorno =
-                                formatearHora(
-                                    item.hora_regreso
-                                ) || "Pendiente";
+                                const horaSalida =
+                                    formatearHora(
+                                        item.hora_salida
+                                    ) || "-";
 
 
-                            return `
+                                const horaRetorno =
+                                    formatearHora(
+                                        item.hora_regreso
+                                    ) || "Pendiente";
 
-                                <tr>
 
-                                    <td>
-                                        ${fecha}
-                                    </td>
+                                return `
 
-                                    <td>
-                                        ${horaSalida}
-                                    </td>
+                                    <tr>
 
-                                    <td>
-                                        ${horaRetorno}
-                                    </td>
+                                        <td>
+                                            ${fecha}
+                                        </td>
 
-                                    <td>
-                                        ${item.motivo || "-"}
-                                    </td>
+                                        <td>
+                                            ${horaSalida}
+                                        </td>
 
-                                    <td>
-                                        ${item.docente || "-"}
-                                    </td>
+                                        <td>
+                                            ${horaRetorno}
+                                        </td>
 
-                                    <td>
-                                        ${item.estado || "-"}
-                                    </td>
+                                        <td>
+                                            ${item.motivo || "-"}
+                                        </td>
 
-                                </tr>
+                                        <td>
+                                            ${item.docente || "-"}
+                                        </td>
 
-                            `;
+                                        <td>
+                                            ${item.estado || "-"}
+                                        </td>
 
-                        }).join("")
+                                    </tr>
 
+                                `;
+
+                            }
+                        ).join("")
                     }
 
                 </tbody>
@@ -926,13 +882,11 @@ console.log("Módulo Reportes cargado.");
     }
 
 
-
     // =====================================================
-    // RANKING GENERAL
+    // CARGAR RANKING GENERAL
     // =====================================================
 
     async function cargarRanking() {
-
 
         const contenedor =
             document.getElementById(
@@ -983,10 +937,6 @@ console.log("Módulo Reportes cargado.");
             );
 
 
-            // =================================================
-            // GUARDAR RANKING PARA PDF
-            // =================================================
-
             datosRanking =
                 Array.isArray(datos)
                     ? datos
@@ -999,7 +949,8 @@ console.log("Módulo Reportes cargado.");
             );
 
 
-        } catch (error) {
+        }
+        catch (error) {
 
             console.error(
                 "Error cargando ranking:",
@@ -1022,7 +973,6 @@ console.log("Módulo Reportes cargado.");
     }
 
 
-
     // =====================================================
     // MOSTRAR RANKING
     // =====================================================
@@ -1031,7 +981,6 @@ console.log("Módulo Reportes cargado.");
         datos,
         contenedor
     ) {
-
 
         if (
             !datos ||
@@ -1092,7 +1041,6 @@ console.log("Módulo Reportes cargado.");
                 <tbody>
 
                     ${
-
                         datos.map(
                             (item, indice) => {
 
@@ -1105,13 +1053,19 @@ console.log("Módulo Reportes cargado.");
                                         </td>
 
                                         <td>
+
                                             ${item.apellidos || ""}
+
                                             ${item.nombres || ""}
+
                                         </td>
 
                                         <td>
+
                                             ${item.grado || ""}
+
                                             ${item.nivel || ""}
+
                                         </td>
 
                                         <td>
@@ -1121,7 +1075,9 @@ console.log("Módulo Reportes cargado.");
                                         <td>
 
                                             <strong>
+
                                                 ${item.total_salidas || 0}
+
                                             </strong>
 
                                         </td>
@@ -1132,7 +1088,6 @@ console.log("Módulo Reportes cargado.");
 
                             }
                         ).join("")
-
                     }
 
                 </tbody>
@@ -1144,13 +1099,11 @@ console.log("Módulo Reportes cargado.");
     }
 
 
-
     // =====================================================
     // CREAR HTML PARA PDF - ESTUDIANTE
     // =====================================================
 
     function crearHTMLReporteEstudiante() {
-
 
         const estudiante =
             estudianteConsultado ||
@@ -1172,62 +1125,64 @@ console.log("Módulo Reportes cargado.");
         ) {
 
             filas =
-                datosReporte.map(item => {
+                datosReporte.map(
+                    item => {
+
+                        const fecha =
+                            formatearFecha(
+                                item.hora_salida
+                            );
 
 
-                    const fecha =
-                        formatearFecha(
-                            item.hora_salida
-                        );
+                        const salida =
+                            formatearHora(
+                                item.hora_salida
+                            ) || "-";
 
 
-                    const salida =
-                        formatearHora(
-                            item.hora_salida
-                        ) || "-";
+                        const retorno =
+                            formatearHora(
+                                item.hora_regreso
+                            ) || "Pendiente";
 
 
-                    const retorno =
-                        formatearHora(
-                            item.hora_regreso
-                        ) || "Pendiente";
+                        return `
 
+                            <tr>
 
-                    return `
+                                <td>
+                                    ${fecha}
+                                </td>
 
-                        <tr>
+                                <td>
+                                    ${salida}
+                                </td>
 
-                            <td>
-                                ${fecha}
-                            </td>
+                                <td>
+                                    ${retorno}
+                                </td>
 
-                            <td>
-                                ${salida}
-                            </td>
+                                <td>
+                                    ${item.motivo || "-"}
+                                </td>
 
-                            <td>
-                                ${retorno}
-                            </td>
+                                <td>
+                                    ${item.docente || "-"}
+                                </td>
 
-                            <td>
-                                ${item.motivo || "-"}
-                            </td>
+                                <td>
+                                    ${item.estado || "-"}
+                                </td>
 
-                            <td>
-                                ${item.docente || "-"}
-                            </td>
+                            </tr>
 
-                            <td>
-                                ${item.estado || "-"}
-                            </td>
+                        `;
 
-                        </tr>
+                    }
+                ).join("");
 
-                    `;
-
-                }).join("");
-
-        } else {
+        }
+        else {
 
             filas = `
 
@@ -1249,6 +1204,8 @@ console.log("Módulo Reportes cargado.");
 
         return `
 
+            <!DOCTYPE html>
+
             <html>
 
             <head>
@@ -1259,9 +1216,12 @@ console.log("Módulo Reportes cargado.");
 
                     body {
 
-                        font-family: Arial, sans-serif;
+                        font-family:
+                            Arial,
+                            sans-serif;
 
-                        padding: 30px;
+                        padding:
+                            30px;
 
                     }
 
@@ -1269,25 +1229,30 @@ console.log("Módulo Reportes cargado.");
                     h1,
                     h2 {
 
-                        text-align: center;
+                        text-align:
+                            center;
 
                     }
 
 
                     h3 {
 
-                        margin-top: 30px;
+                        margin-top:
+                            30px;
 
                     }
 
 
                     table {
 
-                        width: 100%;
+                        width:
+                            100%;
 
-                        border-collapse: collapse;
+                        border-collapse:
+                            collapse;
 
-                        margin-top: 20px;
+                        margin-top:
+                            20px;
 
                     }
 
@@ -1295,18 +1260,22 @@ console.log("Módulo Reportes cargado.");
                     th,
                     td {
 
-                        border: 1px solid black;
+                        border:
+                            1px solid black;
 
-                        padding: 8px;
+                        padding:
+                            8px;
 
-                        text-align: center;
+                        text-align:
+                            center;
 
                     }
 
 
                     th {
 
-                        font-weight: bold;
+                        font-weight:
+                            bold;
 
                     }
 
@@ -1328,8 +1297,11 @@ console.log("Módulo Reportes cargado.");
 
 
                 <h3>
+
                     Estudiante:
+
                     ${nombre}
+
                 </h3>
 
 
@@ -1376,7 +1348,6 @@ console.log("Módulo Reportes cargado.");
 
                 </table>
 
-
             </body>
 
             </html>
@@ -1386,13 +1357,11 @@ console.log("Módulo Reportes cargado.");
     }
 
 
-
     // =====================================================
     // CREAR HTML PARA PDF - RANKING
     // =====================================================
 
     function crearHTMLRanking() {
-
 
         let filas = "";
 
@@ -1415,13 +1384,19 @@ console.log("Módulo Reportes cargado.");
                                 </td>
 
                                 <td>
+
                                     ${item.apellidos || ""}
+
                                     ${item.nombres || ""}
+
                                 </td>
 
                                 <td>
+
                                     ${item.grado || ""}
+
                                     ${item.nivel || ""}
+
                                 </td>
 
                                 <td>
@@ -1429,9 +1404,13 @@ console.log("Módulo Reportes cargado.");
                                 </td>
 
                                 <td>
+
                                     <strong>
+
                                         ${item.total_salidas || 0}
+
                                     </strong>
+
                                 </td>
 
                             </tr>
@@ -1441,7 +1420,8 @@ console.log("Módulo Reportes cargado.");
                     }
                 ).join("");
 
-        } else {
+        }
+        else {
 
             filas = `
 
@@ -1462,6 +1442,8 @@ console.log("Módulo Reportes cargado.");
 
         return `
 
+            <!DOCTYPE html>
+
             <html>
 
             <head>
@@ -1472,9 +1454,12 @@ console.log("Módulo Reportes cargado.");
 
                     body {
 
-                        font-family: Arial, sans-serif;
+                        font-family:
+                            Arial,
+                            sans-serif;
 
-                        padding: 30px;
+                        padding:
+                            30px;
 
                     }
 
@@ -1482,18 +1467,22 @@ console.log("Módulo Reportes cargado.");
                     h1,
                     h2 {
 
-                        text-align: center;
+                        text-align:
+                            center;
 
                     }
 
 
                     table {
 
-                        width: 100%;
+                        width:
+                            100%;
 
-                        border-collapse: collapse;
+                        border-collapse:
+                            collapse;
 
-                        margin-top: 25px;
+                        margin-top:
+                            25px;
 
                     }
 
@@ -1501,18 +1490,22 @@ console.log("Módulo Reportes cargado.");
                     th,
                     td {
 
-                        border: 1px solid black;
+                        border:
+                            1px solid black;
 
-                        padding: 8px;
+                        padding:
+                            8px;
 
-                        text-align: center;
+                        text-align:
+                            center;
 
                     }
 
 
                     th {
 
-                        font-weight: bold;
+                        font-weight:
+                            bold;
 
                     }
 
@@ -1529,8 +1522,10 @@ console.log("Módulo Reportes cargado.");
 
 
                 <h2>
+
                     Ranking de estudiantes
                     con más salidas
+
                 </h2>
 
 
@@ -1573,7 +1568,6 @@ console.log("Módulo Reportes cargado.");
 
                 </table>
 
-
             </body>
 
             </html>
@@ -1583,97 +1577,196 @@ console.log("Módulo Reportes cargado.");
     }
 
 
-
     // =====================================================
     // EXPORTAR PDF
     // =====================================================
 
     btnPDF.onclick = async () => {
 
-
-        let html;
-
-
-        // =================================================
-        // SI EXISTE UNA CONSULTA DE ESTUDIANTE
-        // =================================================
-
-        if (estudianteConsultado) {
+        try {
 
             console.log(
-                "REPORTES: Exportando PDF del estudiante:",
-                estudianteConsultado.id
+                "================================="
+            );
+
+            console.log(
+                "REPORTES: EXPORTAR PDF"
+            );
+
+            console.log(
+                "================================="
             );
 
 
-            html =
-                crearHTMLReporteEstudiante();
+            let html;
 
-        }
-
-
-        // =================================================
-        // SI NO EXISTE CONSULTA
-        // EXPORTAR RANKING
-        // =================================================
-
-        else {
-
-            console.log(
-                "REPORTES: Exportando PDF del ranking general."
-            );
+            let nombreArchivo;
 
 
-            html =
-                crearHTMLRanking();
+            // =================================================
+            // SI EXISTE UNA CONSULTA DE ESTUDIANTE
+            // =================================================
 
-        }
-
-
-        // =================================================
-        // ELECTRON
-        // =================================================
-
-        if (
-            window.electronAPI &&
-            typeof window.electronAPI.exportarPDF === "function"
-        ) {
-
-            try {
-
-                await window.electronAPI.exportarPDF(
-                    html
-                );
-
+            if (estudianteConsultado) {
 
                 console.log(
-                    "REPORTES: PDF enviado correctamente."
+                    "REPORTES: Exportando PDF del estudiante:",
+                    estudianteConsultado.id
                 );
 
 
-            } catch (error) {
+                html =
+                    crearHTMLReporteEstudiante();
 
-                console.error(
-                    "REPORTES: Error exportando PDF:",
-                    error
+
+                nombreArchivo =
+                    "reporte-estudiante.pdf";
+
+            }
+
+
+            // =================================================
+            // SI NO EXISTE CONSULTA
+            // EXPORTAR RANKING
+            // =================================================
+
+            else {
+
+                console.log(
+                    "REPORTES: Exportando PDF del ranking general."
                 );
 
 
-                alert(
-                    "No se pudo generar el PDF."
+                html =
+                    crearHTMLRanking();
+
+
+                nombreArchivo =
+                    "ranking-salidas.pdf";
+
+            }
+
+
+            // =================================================
+            // SERVIDOR EXPRESS
+            // =================================================
+
+            console.log(
+                "REPORTES: enviando HTML al servidor..."
+            );
+
+
+            const respuesta =
+                await fetch(
+                    "/api/reportes/exportar-pdf",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                html:
+                                    html
+
+                            })
+
+                    }
+                );
+
+
+            if (!respuesta.ok) {
+
+                const texto =
+                    await respuesta.text();
+
+
+                throw new Error(
+                    `Error HTTP ${respuesta.status}: ${texto}`
                 );
 
             }
 
-        } else {
+
+            // =================================================
+            // RECIBIR PDF
+            // =================================================
+
+            const blob =
+                await respuesta.blob();
+
+
+            console.log(
+                "REPORTES: PDF recibido correctamente."
+            );
+
+
+            // =================================================
+            // DESCARGAR PDF
+            // =================================================
+
+            const url =
+                window.URL.createObjectURL(
+                    blob
+                );
+
+
+            const enlace =
+                document.createElement(
+                    "a"
+                );
+
+
+            enlace.href =
+                url;
+
+
+            enlace.download =
+                nombreArchivo;
+
+
+            document.body.appendChild(
+                enlace
+            );
+
+
+            enlace.click();
+
+
+            enlace.remove();
+
+
+            window.URL.revokeObjectURL(
+                url
+            );
+
+
+            console.log(
+                "REPORTES: PDF descargado:",
+                nombreArchivo
+            );
+
+
+        }
+        catch (error) {
 
             console.error(
-                "electronAPI.exportarPDF no está disponible."
+                "REPORTES: Error exportando PDF:",
+                error
             );
 
 
             alert(
-                "La función de exportar PDF todavía no está conectada."
+                "No se pudo generar el PDF.\n\n" +
+                error.message
             );
 
         }
