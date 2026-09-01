@@ -1,104 +1,86 @@
-const boton =
-    document.getElementById("btnIngresar");
+const express = require("express");
+
+const authController =
+    require("../controllers/authController");
+
+const router = express.Router();
 
 
-boton.onclick = async () => {
+// ==========================
+// LOGIN
+// ==========================
 
-    const usuario =
-        document.getElementById("usuario").value.trim();
+router.post(
+    "/login",
+    async (req, res) => {
 
-    const password =
-        document.getElementById("password").value;
+        try {
 
-
-    const mensaje =
-        document.getElementById("mensaje");
-
-
-    if (!usuario || !password) {
-
-        mensaje.textContent =
-            "Debe ingresar usuario y contraseña.";
-
-        return;
-
-    }
+            const {
+                usuario,
+                password
+            } = req.body;
 
 
-    try {
+            // ==========================
+            // VALIDAR DATOS
+            // ==========================
 
-        const respuesta =
-            await fetch(
-                "/api/auth/login",
-                {
-                    method: "POST",
+            if (!usuario || !password) {
 
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
+                return res.status(400).json({
 
-                    body: JSON.stringify({
-                        usuario,
-                        password
-                    })
-                }
-            );
+                    success: false,
 
+                    message:
+                        "Debe ingresar usuario y contraseña."
 
-        const resultado =
-            await respuesta.json();
-
-
-        if (resultado.success) {
-
-            // Guardar usuario conectado
-
-            localStorage.setItem(
-                "usuario",
-                JSON.stringify(
-                    resultado.user
-                )
-            );
-
-
-            // Guardar sesión
-
-            if (resultado.sessionId) {
-
-                localStorage.setItem(
-                    "sessionId",
-                    resultado.sessionId
-                );
+                });
 
             }
 
 
-            // Ir al menú principal
+            // ==========================
+            // LOGIN
+            // ==========================
 
-            window.location.href =
-                "principal.html";
+            const resultado =
+                await authController.login(
+                    usuario,
+                    password
+                );
 
 
-        } else {
+            // ==========================
+            // RESPUESTA
+            // ==========================
 
-            mensaje.textContent =
-                resultado.message ||
-                "No se pudo iniciar sesión.";
+            res.json(
+                resultado
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "ERROR LOGIN:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Error interno del servidor."
+
+            });
 
         }
 
-
-    } catch (error) {
-
-        console.error(
-            "ERROR LOGIN:",
-            error
-        );
-
-
-        mensaje.textContent =
-            "No se pudo conectar con el servidor.";
-
     }
+);
 
-};
+
+module.exports = router;

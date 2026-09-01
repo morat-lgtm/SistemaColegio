@@ -1,16 +1,17 @@
 const express = require("express");
 
 const authService =
-require("../services/authService");
+    require("../services/authService");
 
 const sessionManager =
-require("../helpers/sessionManager");
+    require("../helpers/sessionManager");
 
 const workstationRepository =
-require("../repositories/workstationRepository");
+    require("../repositories/workstationRepository");
 
 
-const router = express.Router();
+const router =
+    express.Router();
 
 
 // ==========================
@@ -18,69 +19,84 @@ const router = express.Router();
 // ==========================
 
 router.post(
-"/login",
-async(req,res)=>{
+    "/login",
+    async (req, res) => {
 
-    try{
+        try {
 
-        const {
-            usuario,
-            password,
-            hostname
-        } = req.body;
-
-
-        console.log(
-            "LOGIN RECIBIDO:",
-            {
+            const {
                 usuario,
+                password,
                 hostname
+            } = req.body;
+
+
+            console.log(
+                "LOGIN RECIBIDO:",
+                {
+                    usuario,
+                    hostname
+                }
+            );
+
+
+            // ==========================
+            // VALIDAR DATOS
+            // ==========================
+
+            if (!usuario || !password) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Debe ingresar usuario y contraseña."
+
+                });
+
             }
-        );
 
 
-        const resultado =
-        await authService.login(
+            // ==========================
+            // LOGIN
+            // ==========================
 
-            usuario,
-
-            password,
-
-            hostname
-
-        );
-
-
-        res.json(
-
-            resultado
-
-        );
+            const resultado =
+                await authService.login(
+                    usuario,
+                    password,
+                    hostname
+                );
 
 
-    }catch(error){
-
-        console.error(
-
-            "Error login:",
-
-            error
-
-        );
+            res.json(
+                resultado
+            );
 
 
-        res.status(500).json({
+        }
+        catch (error) {
 
-            success:false,
+            console.error(
+                "Error login:",
+                error
+            );
 
-            message:
-            "Error interno del servidor"
 
-        });
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Error interno del servidor."
+
+            });
+
+        }
 
     }
-
-});
+);
 
 
 // ==========================
@@ -88,56 +104,127 @@ async(req,res)=>{
 // ==========================
 
 router.get(
-"/session/:sessionId",
-(req,res)=>{
+    "/session/:sessionId",
+    (req, res) => {
 
-    try{
+        try {
 
-        const {
-            sessionId
-        } = req.params;
-
-
-        const sesion =
-        sessionManager.get(
-
-            sessionId
-
-        );
+            const {
+                sessionId
+            } = req.params;
 
 
-        if(!sesion){
+            const sesion =
+                sessionManager.get(
+                    sessionId
+                );
 
-            return res.json(null);
+
+            if (!sesion) {
+
+                return res.json(null);
+
+            }
+
+
+            res.json(
+                sesion
+            );
+
+
+        }
+        catch (error) {
+
+            console.error(
+                error
+            );
+
+
+            res.status(500).json({
+
+                error:
+                    error.message
+
+            });
 
         }
 
-
-        res.json(
-
-            sesion
-
-        );
+    }
+);
 
 
-    }catch(error){
+// ==========================
+// CERRAR SESIÓN
+// ==========================
 
-        console.error(
+router.post(
+    "/logout",
+    (req, res) => {
 
-            error
+        try {
 
-        );
+            const {
+                sessionId
+            } = req.body;
 
 
-        res.status(500).json({
+            if (!sessionId) {
 
-            error:error.message
+                return res.status(400).json({
 
-        });
+                    success: false,
+
+                    message:
+                        "Sesión no encontrada."
+
+                });
+
+            }
+
+
+            sessionManager.clear(
+                sessionId
+            );
+
+
+            console.log(
+                "SESIÓN CERRADA:",
+                sessionId
+            );
+
+
+            res.json({
+
+                success: true,
+
+                message:
+                    "Sesión cerrada correctamente."
+
+            });
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "Error cerrando sesión:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Error cerrando sesión."
+
+            });
+
+        }
 
     }
-
-});
+);
 
 
 // ==========================
@@ -145,128 +232,117 @@ router.get(
 // ==========================
 
 router.post(
-"/ambiente",
-async(req,res)=>{
+    "/ambiente",
+    async (req, res) => {
 
-    try{
+        try {
 
-        const {
-            ambiente_id,
-            sessionId
-        } = req.body;
+            const {
+                ambiente_id,
+                sessionId
+            } = req.body;
 
 
-        if(!ambiente_id){
+            if (!ambiente_id) {
 
-            return res.status(400).json({
+                return res.status(400).json({
 
-                success:false,
+                    success: false,
+
+                    message:
+                        "Debe seleccionar un ambiente."
+
+                });
+
+            }
+
+
+            if (!sessionId) {
+
+                return res.status(400).json({
+
+                    success: false,
+
+                    message:
+                        "Sesión no encontrada."
+
+                });
+
+            }
+
+
+            const ambientes =
+                await workstationRepository
+                    .getAllAmbientes();
+
+
+            const ambiente =
+                ambientes.find(
+                    item =>
+                        item.id == ambiente_id
+                );
+
+
+            if (!ambiente) {
+
+                return res.status(404).json({
+
+                    success: false,
+
+                    message:
+                        "Ambiente no encontrado."
+
+                });
+
+            }
+
+
+            console.log(
+                "GUARDANDO AMBIENTE",
+                sessionId,
+                ambiente
+            );
+
+
+            sessionManager.setAmbiente(
+                sessionId,
+                ambiente
+            );
+
+
+            res.json({
+
+                success: true,
+
+                ambiente:
+                    ambiente
+
+            });
+
+
+        }
+        catch (error) {
+
+            console.error(
+                "ERROR CAMBIANDO AMBIENTE:",
+                error
+            );
+
+
+            res.status(500).json({
+
+                success: false,
 
                 message:
-                "Debe seleccionar un ambiente."
+                    error.message
 
             });
 
         }
-
-
-        if(!sessionId){
-
-            return res.status(400).json({
-
-                success:false,
-
-                message:
-                "Sesión no encontrada."
-
-            });
-
-        }
-
-
-        const ambientes =
-        await workstationRepository
-        .getAllAmbientes();
-
-
-        const ambiente =
-        ambientes.find(
-
-            item =>
-            item.id == ambiente_id
-
-        );
-
-
-        if(!ambiente){
-
-            return res.status(404).json({
-
-                success:false,
-
-                message:
-                "Ambiente no encontrado."
-
-            });
-
-        }
-
-
-        console.log(
-
-            "GUARDANDO AMBIENTE",
-
-            sessionId,
-
-            ambiente
-
-        );
-
-
-        sessionManager.setAmbiente(
-
-            sessionId,
-
-            ambiente
-
-        );
-
-
-        res.json({
-
-            success:true,
-
-            ambiente:ambiente
-
-        });
-
-
-    }catch(error){
-
-        console.error(
-
-            "ERROR CAMBIANDO AMBIENTE:",
-
-            error
-
-        );
-
-
-        res.status(500).json({
-
-            success:false,
-
-            message:error.message
-
-        });
 
     }
+);
 
-});
 
-
-// ==========================
-// EXPORTAR RUTAS
-// ==========================
-
-module.exports = router;
+module.exports =
+    router;

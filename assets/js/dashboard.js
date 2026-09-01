@@ -382,7 +382,67 @@ document
         }
     );
 
+// ==========================
+// CERRAR SESIÓN
+// ==========================
 
+const btnCerrarSesion =
+    document.getElementById("btnCerrarSesion");
+
+
+if (btnCerrarSesion) {
+
+    btnCerrarSesion.addEventListener(
+        "click",
+        async () => {
+
+            const confirmar =
+                confirm(
+                    "¿Está seguro de que desea cerrar sesión?"
+                );
+
+
+            if (!confirmar) {
+
+                return;
+
+            }
+
+
+            try {
+
+                // Limpiar datos de sesión del navegador
+
+                sessionStorage.clear();
+
+                localStorage.removeItem(
+                    "sessionId"
+                );
+
+                localStorage.removeItem(
+                    "usuario"
+                );
+
+
+                // Regresar al login
+
+                window.location.href =
+                    "/";
+
+            }
+            catch(error) {
+
+                console.error(
+                    "Error cerrando sesión:",
+                    error
+                );
+
+            }
+
+        }
+    );
+
+}
 // ==========================
 // CARGAR INICIO
 // ==========================
