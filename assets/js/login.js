@@ -1,32 +1,70 @@
 const formulario =
     document.getElementById("formLogin");
 
+const mensaje =
+    document.getElementById("mensaje");
+
+
+/* ==========================
+   OBTENER IDENTIFICADOR
+   DEL EQUIPO
+========================== */
+
+function obtenerWorkstationKey() {
+
+    let key =
+        localStorage.getItem("workstationKey");
+
+
+    if (!key) {
+
+        key =
+            crypto.randomUUID();
+
+
+        localStorage.setItem(
+            "workstationKey",
+            key
+        );
+
+    }
+
+
+    return key;
+
+}
+
+
+/* ==========================
+   LOGIN
+========================== */
 
 formulario.addEventListener(
     "submit",
-    async (evento) => {
+    async function (event) {
 
-        evento.preventDefault();
+        // Evitar el envío normal
+        // del formulario
+
+        event.preventDefault();
 
 
         const usuario =
-            document
-                .getElementById("usuario")
+            document.getElementById("usuario")
                 .value
                 .trim();
 
 
         const password =
-            document
-                .getElementById("password")
+            document.getElementById("password")
                 .value;
 
 
-        const mensaje =
-            document.getElementById("mensaje");
+        /* ==========================
+           VALIDAR DATOS
+        ========================== */
 
-
-        if (usuario === "" || password === "") {
+        if (!usuario || !password) {
 
             mensaje.textContent =
                 "Debe ingresar usuario y contraseña.";
@@ -38,20 +76,69 @@ formulario.addEventListener(
 
         try {
 
+            /* ==========================
+               DESHABILITAR BOTÓN
+            ========================== */
+
+            const boton =
+                document.getElementById(
+                    "btnIngresar"
+                );
+
+
+            boton.disabled = true;
+
+
+            mensaje.textContent =
+                "Iniciando sesión...";
+
+
+            /* ==========================
+               OBTENER WORKSTATION KEY
+            ========================== */
+
+            const workstationKey =
+                obtenerWorkstationKey();
+
+
+            console.log(
+                "WORKSTATION KEY:",
+                workstationKey
+            );
+
+
+            /* ==========================
+               LOGIN
+            ========================== */
+
             const respuesta =
                 await fetch(
                     "/api/auth/login",
                     {
+
                         method: "POST",
 
                         headers: {
-                            "Content-Type": "application/json"
+
+                            "Content-Type":
+                                "application/json"
+
                         },
 
-                        body: JSON.stringify({
-                            usuario: usuario,
-                            password: password
-                        })
+                        body:
+                            JSON.stringify({
+
+                                usuario:
+                                    usuario,
+
+                                password:
+                                    password,
+
+                                workstationKey:
+                                    workstationKey
+
+                            })
+
                     }
                 );
 
@@ -60,9 +147,22 @@ formulario.addEventListener(
                 await respuesta.json();
 
 
+            console.log(
+                "RESPUESTA COMPLETA DEL LOGIN:",
+                resultado
+            );
+
+
+            /* ==========================
+               LOGIN CORRECTO
+            ========================== */
+
             if (resultado.success) {
 
-                // Guardar usuario conectado
+
+                /* ==========================
+                   GUARDAR USUARIO
+                ========================== */
 
                 localStorage.setItem(
                     "usuario",
@@ -72,17 +172,81 @@ formulario.addEventListener(
                 );
 
 
-                // Ir al menú principal
+                /* ==========================
+                   GUARDAR SESSION ID
+                ========================== */
+
+                if (!resultado.sessionId) {
+
+                    console.error(
+                        "EL SERVIDOR NO DEVOLVIÓ sessionId"
+                    );
+
+
+                    mensaje.textContent =
+                        "No se pudo crear la sesión.";
+
+                    boton.disabled = false;
+
+                    return;
+
+                }
+
+
+                localStorage.setItem(
+                    "sessionId",
+                    String(
+                        resultado.sessionId
+                    )
+                );
+
+
+                /* ==========================
+                   GUARDAR WORKSTATION KEY
+                ========================== */
+
+                localStorage.setItem(
+                    "workstationKey",
+                    workstationKey
+                );
+
+
+                /* ==========================
+                   VERIFICAR
+                ========================== */
+
+                console.log(
+                    "WORKSTATION KEY GUARDADA:",
+                    localStorage.getItem(
+                        "workstationKey"
+                    )
+                );
+
+
+                console.log(
+                    "SESSION ID GUARDADO:",
+                    localStorage.getItem(
+                        "sessionId"
+                    )
+                );
+
+
+                /* ==========================
+                   IR AL SISTEMA
+                ========================== */
 
                 window.location.href =
-                    "principal.html";
+                    "/principal.html";
 
 
             } else {
 
                 mensaje.textContent =
                     resultado.message ||
-                    "Usuario o contraseña incorrectos.";
+                    "No se pudo iniciar sesión.";
+
+
+                boton.disabled = false;
 
             }
 
@@ -90,13 +254,23 @@ formulario.addEventListener(
         } catch (error) {
 
             console.error(
-                "Error realizando login:",
+                "ERROR LOGIN:",
                 error
             );
 
 
             mensaje.textContent =
+                error.message ||
                 "No se pudo conectar con el servidor.";
+
+
+            const boton =
+                document.getElementById(
+                    "btnIngresar"
+                );
+
+
+            boton.disabled = false;
 
         }
 

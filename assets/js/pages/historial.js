@@ -22,7 +22,38 @@
 
     let registros = [];
 
+// ==========================
+// FORMATEAR FECHA Y HORA PERÚ
+// ==========================
 
+function formatearFechaPeru(fecha) {
+
+    if (!fecha) {
+        return "";
+    }
+
+    const fechaObj =
+        new Date(fecha);
+
+    if (isNaN(fechaObj.getTime())) {
+        return fecha;
+    }
+
+    return fechaObj.toLocaleString(
+        "es-PE",
+        {
+            timeZone: "America/Lima",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        }
+    );
+
+}
     // ==========================
     // INICIO
     // ==========================
@@ -314,7 +345,7 @@
 
                             🕒 Salida:
 
-                            ${salida.hora_salida ?? ""}
+                            ${formatearFechaPeru(salida.hora_salida)}
 
                             <br>
 
@@ -322,10 +353,22 @@
                             🔄 Retorno:
 
                             ${
-                                salida.hora_regreso
-                                ??
-                                "Pendiente"
-                            }
+    salida.hora_regreso
+    ? new Date(salida.hora_regreso).toLocaleString(
+        "es-PE",
+        {
+            timeZone: "America/Lima",
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+            hour12: false
+        }
+    )
+    : "Pendiente"
+}
 
                         </small>
 

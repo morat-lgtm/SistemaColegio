@@ -1,13 +1,13 @@
-const express = require("express");
+const express =
+    require("express");
 
-const authService =
-    require("../services/authService");
+
+const authController =
+    require("../controllers/authController");
+
 
 const sessionManager =
     require("../helpers/sessionManager");
-
-const workstationRepository =
-    require("../repositories/workstationRepository");
 
 
 const router =
@@ -27,7 +27,7 @@ router.post(
             const {
                 usuario,
                 password,
-                hostname
+                workstationKey
             } = req.body;
 
 
@@ -35,7 +35,7 @@ router.post(
                 "LOGIN RECIBIDO:",
                 {
                     usuario,
-                    hostname
+                    workstationKey
                 }
             );
 
@@ -63,28 +63,31 @@ router.post(
             // ==========================
 
             const resultado =
-                await authService.login(
+                await authController.login(
                     usuario,
                     password,
-                    hostname
+                    workstationKey
                 );
 
 
-            res.json(
+            // ==========================
+            // RESPUESTA
+            // ==========================
+
+            return res.json(
                 resultado
             );
 
 
-        }
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "Error login:",
+                "ERROR LOGIN:",
                 error
             );
 
 
-            res.status(500).json({
+            return res.status(500).json({
 
                 success: false,
 
@@ -100,7 +103,7 @@ router.post(
 
 
 // ==========================
-// OBTENER SESIÓN ACTUAL
+// OBTENER SESIÓN
 // ==========================
 
 router.get(
@@ -114,227 +117,80 @@ router.get(
             } = req.params;
 
 
+            console.log(
+                "SOLICITUD DE SESIÓN:",
+                sessionId
+            );
+
+
+            // ==========================
+            // OBTENER SESIÓN
+            // ==========================
+
             const sesion =
                 sessionManager.get(
-                    sessionId
+                    String(sessionId)
                 );
 
+
+            // ==========================
+            // SESIÓN NO EXISTE
+            // ==========================
 
             if (!sesion) {
 
-                return res.json(null);
-
-            }
-
-
-            res.json(
-                sesion
-            );
-
-
-        }
-        catch (error) {
-
-            console.error(
-                error
-            );
-
-
-            res.status(500).json({
-
-                error:
-                    error.message
-
-            });
-
-        }
-
-    }
-);
-
-
-// ==========================
-// CERRAR SESIÓN
-// ==========================
-
-router.post(
-    "/logout",
-    (req, res) => {
-
-        try {
-
-            const {
-                sessionId
-            } = req.body;
-
-
-            if (!sessionId) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        "Sesión no encontrada."
-
-                });
-
-            }
-
-
-            sessionManager.clear(
-                sessionId
-            );
-
-
-            console.log(
-                "SESIÓN CERRADA:",
-                sessionId
-            );
-
-
-            res.json({
-
-                success: true,
-
-                message:
-                    "Sesión cerrada correctamente."
-
-            });
-
-
-        }
-        catch (error) {
-
-            console.error(
-                "Error cerrando sesión:",
-                error
-            );
-
-
-            res.status(500).json({
-
-                success: false,
-
-                message:
-                    "Error cerrando sesión."
-
-            });
-
-        }
-
-    }
-);
-
-
-// ==========================
-// CAMBIAR AMBIENTE
-// ==========================
-
-router.post(
-    "/ambiente",
-    async (req, res) => {
-
-        try {
-
-            const {
-                ambiente_id,
-                sessionId
-            } = req.body;
-
-
-            if (!ambiente_id) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        "Debe seleccionar un ambiente."
-
-                });
-
-            }
-
-
-            if (!sessionId) {
-
-                return res.status(400).json({
-
-                    success: false,
-
-                    message:
-                        "Sesión no encontrada."
-
-                });
-
-            }
-
-
-            const ambientes =
-                await workstationRepository
-                    .getAllAmbientes();
-
-
-            const ambiente =
-                ambientes.find(
-                    item =>
-                        item.id == ambiente_id
+                console.warn(
+                    "SESIÓN NO ENCONTRADA:",
+                    sessionId
                 );
 
-
-            if (!ambiente) {
 
                 return res.status(404).json({
 
                     success: false,
 
                     message:
-                        "Ambiente no encontrado."
+                        "Sesión no encontrada."
 
                 });
 
             }
 
 
+            // ==========================
+            // RESPUESTA
+            // ==========================
+
             console.log(
-                "GUARDANDO AMBIENTE",
-                sessionId,
-                ambiente
+                "SESIÓN ENCONTRADA:",
+                sesion
             );
 
 
-            sessionManager.setAmbiente(
-                sessionId,
-                ambiente
-            );
-
-
-            res.json({
+            return res.json({
 
                 success: true,
 
-                ambiente:
-                    ambiente
+                session:
+                    sesion
 
             });
 
 
-        }
-        catch (error) {
+        } catch (error) {
 
             console.error(
-                "ERROR CAMBIANDO AMBIENTE:",
+                "ERROR OBTENIENDO SESIÓN:",
                 error
             );
 
 
-            res.status(500).json({
+            return res.status(500).json({
 
                 success: false,
 
                 message:
-                    error.message
+                    "Error interno del servidor."
 
             });
 
@@ -343,6 +199,10 @@ router.post(
     }
 );
 
+
+// ==========================
+// EXPORTAR
+// ==========================
 
 module.exports =
     router;

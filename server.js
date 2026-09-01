@@ -104,8 +104,7 @@ app.use(
 // ==========================
 // CLIENTE WEB
 // ==========================
-
-// Archivos públicos de la carpeta web
+// Los HTML continúan en /web
 
 app.use(
     express.static(
@@ -120,8 +119,7 @@ app.use(
 // ==========================
 // ASSETS
 // ==========================
-
-// CSS y JavaScript compartidos
+// CSS, JavaScript e imágenes
 
 app.use(
     "/assets",
@@ -137,6 +135,7 @@ app.use(
 // ==========================
 // PÁGINA PRINCIPAL
 // ==========================
+// La página de inicio continúa en web/index.html
 
 app.get(
     "/",
@@ -248,9 +247,6 @@ app.use(
 // ==========================
 // PUERTO
 // ==========================
-
-// Render proporciona process.env.PORT.
-// En desarrollo local utilizaremos 3000.
 
 const PORT =
     process.env.PORT || 3000;

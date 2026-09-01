@@ -18,7 +18,13 @@ class WorkstationRepository {
         const result =
             await db.query(`
 
-                SELECT *
+                SELECT
+                    id,
+                    hostname,
+                    workstation_key,
+                    ambiente_id,
+                    activo,
+                    created_at
 
                 FROM workstations
 
@@ -45,7 +51,13 @@ class WorkstationRepository {
         const result =
             await db.query(`
 
-                SELECT *
+                SELECT
+                    id,
+                    hostname,
+                    workstation_key,
+                    ambiente_id,
+                    activo,
+                    created_at
 
                 FROM workstations
 
@@ -54,6 +66,82 @@ class WorkstationRepository {
             `,
             [
                 id
+            ]);
+
+
+        return result.rows[0] || null;
+
+    }
+
+
+    // ==========================
+    // BUSCAR POR WORKSTATION KEY
+    // ==========================
+
+    async getByWorkstationKey(
+        workstationKey
+    ) {
+
+        const db =
+            databaseManager.getConnection();
+
+
+        const result =
+            await db.query(`
+
+                SELECT
+                    id,
+                    hostname,
+                    workstation_key,
+                    ambiente_id,
+                    activo,
+                    created_at
+
+                FROM workstations
+
+                WHERE workstation_key = $1
+
+                AND activo = true
+
+            `,
+            [
+                workstationKey
+            ]);
+
+
+        return result.rows[0] || null;
+
+    }
+
+
+    // ==========================
+    // BUSCAR POR NOMBRE DE PC
+    // ==========================
+
+    async getByHostname(hostname) {
+
+        const db =
+            databaseManager.getConnection();
+
+
+        const result =
+            await db.query(`
+
+                SELECT
+                    id,
+                    hostname,
+                    workstation_key,
+                    ambiente_id,
+                    activo,
+                    created_at
+
+                FROM workstations
+
+                WHERE hostname = $1
+
+            `,
+            [
+                hostname
             ]);
 
 
@@ -75,7 +163,8 @@ class WorkstationRepository {
         const result =
             await db.query(`
 
-                SELECT COUNT(*) AS total
+                SELECT
+                    COUNT(*) AS total
 
                 FROM workstations
 
@@ -90,40 +179,14 @@ class WorkstationRepository {
 
 
     // ==========================
-    // BUSCAR POR NOMBRE PC
-    // ==========================
-
-    async getByHostname(hostname) {
-
-        const db =
-            databaseManager.getConnection();
-
-
-        const result =
-            await db.query(`
-
-                SELECT *
-
-                FROM workstations
-
-                WHERE hostname = $1
-
-            `,
-            [
-                hostname
-            ]);
-
-
-        return result.rows[0] || null;
-
-    }
-
-
-    // ==========================
     // GUARDAR / ACTUALIZAR
     // ==========================
 
-    async save(hostname, ambienteId) {
+    async save(
+        hostname,
+        ambienteId,
+        workstationKey = null
+    ) {
 
         const db =
             databaseManager.getConnection();
@@ -142,15 +205,18 @@ class WorkstationRepository {
 
                     UPDATE workstations
 
-                    SET ambiente_id = $1
+                    SET
+                        ambiente_id = $1,
+                        workstation_key = $2
 
-                    WHERE hostname = $2
+                    WHERE hostname = $3
 
                     RETURNING *
 
                 `,
                 [
                     ambienteId,
+                    workstationKey,
                     hostname
                 ]);
 
@@ -164,17 +230,19 @@ class WorkstationRepository {
             await db.query(`
 
                 INSERT INTO workstations
-
                 (
                     hostname,
-                    ambiente_id
+                    ambiente_id,
+                    workstation_key,
+                    activo
                 )
 
                 VALUES
-
                 (
                     $1,
-                    $2
+                    $2,
+                    $3,
+                    true
                 )
 
                 RETURNING *
@@ -182,11 +250,79 @@ class WorkstationRepository {
             `,
             [
                 hostname,
-                ambienteId
+                ambienteId,
+                workstationKey
             ]);
 
 
         return result.rows[0];
+
+    }
+
+
+    // ==========================
+    // ASIGNAR WORKSTATION KEY
+    // ==========================
+
+    async setWorkstationKey(
+        id,
+        workstationKey
+    ) {
+
+        const db =
+            databaseManager.getConnection();
+
+
+        const result =
+            await db.query(`
+
+                UPDATE workstations
+
+                SET
+                    workstation_key = $1
+
+                WHERE id = $2
+
+                RETURNING *
+
+            `,
+            [
+                workstationKey,
+                id
+            ]);
+
+
+        return result.rows[0] || null;
+
+    }
+
+
+    // ==========================
+    // BUSCAR AMBIENTE POR ID
+    // ==========================
+
+    async getAmbienteById(id) {
+
+        const db =
+            databaseManager.getConnection();
+
+
+        const result =
+            await db.query(`
+
+                SELECT *
+
+                FROM ambientes
+
+                WHERE id = $1
+
+            `,
+            [
+                id
+            ]);
+
+
+        return result.rows[0] || null;
 
     }
 
@@ -217,9 +353,12 @@ class WorkstationRepository {
 
     }
 
-
 }
 
+
+// ==========================
+// EXPORTAR
+// ==========================
 
 module.exports =
     new WorkstationRepository();

@@ -1,232 +1,274 @@
-const bcrypt = require("bcryptjs");
+const bcrypt =
+    require("bcryptjs");
+
 
 const userRepository =
-require("../repositories/userRepository");
+    require("../repositories/userRepository");
+
 
 const sessionManager =
-require("../helpers/sessionManager");
+    require("../helpers/sessionManager");
+
 
 const workstationRepository =
-require("../repositories/workstationRepository");
+    require("../repositories/workstationRepository");
 
 
 class AuthService {
 
 
-// ==========================
-// LOGIN
-// ==========================
-
-async login(
-    usuario,
-    password,
-    hostname
-){
-
     // ==========================
-    // BUSCAR USUARIO
+    // LOGIN
     // ==========================
 
-    const user =
-    await userRepository.findByUsername(
-
-        usuario
-
-    );
-
-
-    if(!user){
-
-        return {
-
-            success:false,
-
-            message:
-            "Usuario no encontrado"
-
-        };
-
-    }
-
-
-    // ==========================
-    // VERIFICAR CONTRASEÑA
-    // ==========================
-
-    const ok =
-    bcrypt.compareSync(
-
+    async login(
+        usuario,
         password,
-
-        user.password
-
-    );
+        workstationKey
+    ) {
 
 
-    if(!ok){
+        // ==========================
+        // BUSCAR USUARIO
+        // ==========================
 
-        return {
-
-            success:false,
-
-            message:
-            "Contraseña incorrecta"
-
-        };
-
-    }
+        const user =
+            await userRepository.findByUsername(
+                usuario
+            );
 
 
-    // ==========================
-    // BUSCAR WORKSTATION
-    // DE LA PC CLIENTE
-    // ==========================
+        if (!user) {
 
-    let workstation = null;
+            return {
 
+                success: false,
 
-    if(hostname){
+                message:
+                    "Usuario no encontrado"
 
-        workstation =
-        await workstationRepository
-        .getByHostname(
+            };
 
-            hostname
-
-        );
+        }
 
 
-        console.log(
+        // ==========================
+        // VERIFICAR CONTRASEÑA
+        // ==========================
 
-            "WORKSTATION DEL CLIENTE:",
+        const ok =
+            bcrypt.compareSync(
+                password,
+                user.password
+            );
 
-            {
 
-                hostname,
+        if (!ok) {
 
-                workstation
+            return {
+
+                success: false,
+
+                message:
+                    "Contraseña incorrecta"
+
+            };
+
+        }
+
+
+        // ==========================
+        // BUSCAR WORKSTATION
+        // ==========================
+
+        let workstation = null;
+
+
+        if (workstationKey) {
+
+            console.log(
+                "WORKSTATION KEY DEL CLIENTE:",
+                workstationKey
+            );
+
+
+            workstation =
+                await workstationRepository
+                    .getByWorkstationKey(
+                        workstationKey
+                    );
+
+
+            if (workstation) {
+
+                console.log(
+                    "WORKSTATION ENCONTRADA:",
+                    workstation
+                );
+
+            } else {
+
+                console.warn(
+                    "NO SE ENCONTRÓ WORKSTATION PARA:",
+                    workstationKey
+                );
 
             }
 
-        );
+        } else {
 
-    }else{
+            console.warn(
+                "LOGIN SIN WORKSTATION KEY"
+            );
 
-        console.warn(
-
-            "LOGIN SIN HOSTNAME"
-
-        );
-
-    }
+        }
 
 
-    // ==========================
-    // CREAR SESIÓN
-    // ==========================
+        // ==========================
+        // CREAR SESIÓN
+        // ==========================
 
-    const sessionId =
-    sessionManager.create({
+        const sessionId =
+            sessionManager.create({
 
-        id:user.id,
+                id:
+                    user.id,
 
-        usuario:user.usuario,
+                usuario:
+                    user.usuario,
 
-        nombre:
-        `${user.nombres} ${user.apellidos}`,
+                nombre:
+                    `${user.nombres} ${user.apellidos}`,
 
-        rol_id:user.rol_id,
+                rol_id:
+                    user.rol_id,
 
-        rol:user.rol
+                rol:
+                    user.rol
 
-    });
+            });
 
 
-    // ==========================
-    // ASIGNAR WORKSTATION
-    // ==========================
+        // ==========================
+        // ASIGNAR WORKSTATION
+        // ==========================
 
-    if(workstation){
+        if (workstation) {
 
-        sessionManager.setWorkstation(
+            sessionManager.setWorkstation(
+                sessionId,
+                workstation
+            );
 
-            sessionId,
 
-            workstation
+            console.log(
+                "WORKSTATION ASIGNADA A SESIÓN:",
+                {
 
-        );
+                    sessionId,
+
+                    workstation_id:
+                        workstation.id,
+
+                    workstationKey:
+                        workstation.workstation_key,
+
+                    hostname:
+                        workstation.hostname,
+
+                    ambiente_id:
+                        workstation.ambiente_id
+
+                }
+            );
+
+
+            // ==========================
+            // BUSCAR AMBIENTE
+            // ==========================
+
+            if (workstation.ambiente_id) {
+
+                const ambiente =
+                    await workstationRepository
+                        .getAmbienteById(
+                            workstation.ambiente_id
+                        );
+
+
+                if (ambiente) {
+
+                    // ==========================
+                    // ASIGNAR AMBIENTE A SESIÓN
+                    // ==========================
+
+                    sessionManager.setAmbiente(
+                        sessionId,
+                        ambiente
+                    );
+
+
+                    console.log(
+                        "AMBIENTE ASIGNADO A SESIÓN:",
+                        ambiente
+                    );
+
+                } else {
+
+                    console.warn(
+                        "NO SE ENCONTRÓ AMBIENTE PARA ID:",
+                        workstation.ambiente_id
+                    );
+
+                }
+
+            } else {
+
+                console.warn(
+                    "LA WORKSTATION NO TIENE AMBIENTE ASIGNADO."
+                );
+
+            }
+
+        }
+
+
+        // ==========================
+        // OBTENER SESIÓN COMPLETA
+        // ==========================
+
+        const sesion =
+            sessionManager.get(
+                sessionId
+            );
 
 
         console.log(
+            "SESIÓN CREADA:",
+            sesion
+        );
 
-            "WORKSTATION ASIGNADA A SESIÓN:",
 
-            {
+        // ==========================
+        // RESPUESTA
+        // ==========================
 
+        return {
+
+            success: true,
+
+            user:
+                user,
+
+            sessionId:
                 sessionId,
 
-                workstation_id:
-                workstation.id,
+            session:
+                sesion
 
-                hostname:
-                workstation.hostname
-
-            }
-
-        );
-
-    }else{
-
-        console.warn(
-
-            "NO SE ENCONTRÓ WORKSTATION PARA:",
-
-            hostname
-
-        );
+        };
 
     }
-
-
-    // ==========================
-    // OBTENER SESIÓN COMPLETA
-    // ==========================
-
-    const sesion =
-    sessionManager.get(
-
-        sessionId
-
-    );
-
-
-    console.log(
-
-        "SESIÓN CREADA:",
-
-        sesion
-
-    );
-
-
-    // ==========================
-    // RESPUESTA
-    // ==========================
-
-    return {
-
-        success:true,
-
-        user:user,
-
-        sessionId:sessionId,
-
-        session:sesion
-
-    };
-
-}
-
 
 }
 
@@ -236,4 +278,4 @@ async login(
 // ==========================
 
 module.exports =
-new AuthService();
+    new AuthService();

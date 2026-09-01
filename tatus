@@ -1,0 +1,237 @@
+[1mdiff --git a/assets/js/login.js b/assets/js/login.js[m
+[1mindex cb22b67..769dab8 100644[m
+[1m--- a/assets/js/login.js[m
+[1m+++ b/assets/js/login.js[m
+[36m@@ -1,32 +1,70 @@[m
+ const formulario =[m
+     document.getElementById("formLogin");[m
+ [m
+[32m+[m[32mconst mensaje =[m
+[32m+[m[32m    document.getElementById("mensaje");[m
+[32m+[m
+[32m+[m
+[32m+[m[32m/* ==========================[m
+[32m+[m[32m   OBTENER IDENTIFICADOR[m
+[32m+[m[32m   DEL EQUIPO[m
+[32m+[m[32m========================== */[m
+[32m+[m
+[32m+[m[32mfunction obtenerWorkstationKey() {[m
+[32m+[m
+[32m+[m[32m    let key =[m
+[32m+[m[32m        localStorage.getItem("workstationKey");[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    if (!key) {[m
+[32m+[m
+[32m+[m[32m        key =[m
+[32m+[m[32m            crypto.randomUUID();[m
+[32m+[m
+[32m+[m
+[32m+[m[32m        localStorage.setItem([m
+[32m+[m[32m            "workstationKey",[m
+[32m+[m[32m            key[m
+[32m+[m[32m        );[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    return key;[m
+[32m+[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m
+[32m+[m[32m/* ==========================[m
+[32m+[m[32m   LOGIN[m
+[32m+[m[32m========================== */[m
+ [m
+ formulario.addEventListener([m
+     "submit",[m
+[31m-    async (evento) => {[m
+[32m+[m[32m    async function (event) {[m
+ [m
+[31m-        evento.preventDefault();[m
+[32m+[m[32m        // Evitar el envío normal[m
+[32m+[m[32m        // del formulario[m
+[32m+[m
+[32m+[m[32m        event.preventDefault();[m
+ [m
+ [m
+         const usuario =[m
+[31m-            document[m
+[31m-                .getElementById("usuario")[m
+[32m+[m[32m            document.getElementById("usuario")[m
+                 .value[m
+                 .trim();[m
+ [m
+ [m
+         const password =[m
+[31m-            document[m
+[31m-                .getElementById("password")[m
+[32m+[m[32m            document.getElementById("password")[m
+                 .value;[m
+ [m
+ [m
+[31m-        const mensaje =[m
+[31m-            document.getElementById("mensaje");[m
+[31m-[m
+[32m+[m[32m        /* ==========================[m
+[32m+[m[32m           VALIDAR DATOS[m
+[32m+[m[32m        ========================== */[m
+ [m
+[31m-        if (usuario === "" || password === "") {[m
+[32m+[m[32m        if (!usuario || !password) {[m
+ [m
+             mensaje.textContent =[m
+                 "Debe ingresar usuario y contraseña.";[m
+[36m@@ -38,20 +76,69 @@[m [mformulario.addEventListener([m
+ [m
+         try {[m
+ [m
+[32m+[m[32m            /* ==========================[m
+[32m+[m[32m               DESHABILITAR BOTÓN[m
+[32m+[m[32m            ========================== */[m
+[32m+[m
+[32m+[m[32m            const boton =[m
+[32m+[m[32m                document.getElementById([m
+[32m+[m[32m                    "btnIngresar"[m
+[32m+[m[32m                );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            boton.disabled = true;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            mensaje.textContent =[m
+[32m+[m[32m                "Iniciando sesión...";[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            /* ==========================[m
+[32m+[m[32m               OBTENER WORKSTATION KEY[m
+[32m+[m[32m            ========================== */[m
+[32m+[m
+[32m+[m[32m            const workstationKey =[m
+[32m+[m[32m                obtenerWorkstationKey();[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            console.log([m
+[32m+[m[32m                "WORKSTATION KEY:",[m
+[32m+[m[32m                workstationKey[m
+[32m+[m[32m            );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            /* ==========================[m
+[32m+[m[32m               LOGIN[m
+[32m+[m[32m            ========================== */[m
+[32m+[m
+             const respuesta =[m
+                 await fetch([m
+                     "/api/auth/login",[m
+                     {[m
+[32m+[m
+                         method: "POST",[m
+ [m
+                         headers: {[m
+[31m-                            "Content-Type": "application/json"[m
+[32m+[m
+[32m+[m[32m                            "Content-Type":[m
+[32m+[m[32m                                "application/json"[m
+[32m+[m
+                         },[m
+ [m
+[31m-                        body: JSON.stringify({[m
+[31m-                            usuario: usuario,[m
+[31m-                            password: password[m
+[31m-                        })[m
+[32m+[m[32m                        body:[m
+[32m+[m[32m                            JSON.stringify({[m
+[32m+[m
+[32m+[m[32m                                usuario:[m
+[32m+[m[32m                                    usuario,[m
+[32m+[m
+[32m+[m[32m                                password:[m
+[32m+[m[32m                                    password,[m
+[32m+[m
+[32m+[m[32m                                workstationKey:[m
+[32m+[m[32m                                    workstationKey[m
+[32m+[m
+[32m+[m[32m                            })[m
+[32m+[m
+                     }[m
+                 );[m
+ [m
+[36m@@ -60,9 +147,22 @@[m [mformulario.addEventListener([m
+                 await respuesta.json();[m
+ [m
+ [m
+[32m+[m[32m            console.log([m
+[32m+[m[32m                "RESPUESTA COMPLETA DEL LOGIN:",[m
+[32m+[m[32m                resultado[m
+[32m+[m[32m            );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m            /* ==========================[m
+[32m+[m[32m               LOGIN CORRECTO[m
+[32m+[m[32m            ========================== */[m
+[32m+[m
+             if (resultado.success) {[m
+ [m
+[31m-                // Guardar usuario conectado[m
+[32m+[m
+[32m+[m[32m                /* ==========================[m
+[32m+[m[32m                   GUARDAR USUARIO[m
+[32m+[m[32m                ========================== */[m
+ [m
+                 localStorage.setItem([m
+                     "usuario",[m
+[36m@@ -72,17 +172,81 @@[m [mformulario.addEventListener([m
+                 );[m
+ [m
+ [m
+[31m-                // Ir al menú principal[m
+[32m+[m[32m                /* ==========================[m
+[32m+[m[32m                   GUARDAR SESSION ID[m
+[32m+[m[32m                ========================== */[m
+[32m+[m
+[32m+[m[32m                if (!resultado.sessionId) {[m
+[32m+[m
+[32m+[m[32m                    console.error([m
+[32m+[m[32m                        "EL SERVIDOR NO DEVOLVIÓ sessionId"[m
+[32m+[m[32m                    );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                    mensaje.textContent =[m
+[32m+[m[32m                        "No se pudo crear la sesión.";[m
+[32m+[m
+[32m+[m[32m                    boton.disabled = false;[m
+[32m+[m
+[32m+[m[32m                    return;[m
+[32m+[m
+[32m+[m[32m                }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                localStorage.setItem([m
+[32m+[m[32m                    "sessionId",[m
+[32m+[m[32m                    String([m
+[32m+[m[32m                        resultado.sessionId[m
+[32m+[m[32m                    )[m
+[32m+[m[32m                );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                /* ==========================[m
+[32m+[m[32m                   GUARDAR WORKSTATION KEY[m
+[32m+[m[32m                ========================== */[m
+[32m+[m
+[32m+[m[32m                localStorage.setItem([m
+[32m+[m[32m                    "workstationKey",[m
+[32m+[m[32m                    workstationKey[m
+[32m+[m[32m                );[m
+[32m+[m
+[32m+[m
+[32m+[m[32m                /* ==========================[m
+[32m+[m[32m                   VERIFICAR[m
+[32m+[m[32m                ========================== */[m
+[32m+[m
+[32m+[m[32m                console.log([m
+[32m+[m[32m                    "WORKSTATION KEY GUARDADA:",[m
+[32m+[m[32m                    localStorage.getItem([m
+[32m+[m[32m                        "workstationKey"[m
+[32m+[m[32m                    )[

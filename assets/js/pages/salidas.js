@@ -809,7 +809,41 @@
             );
 
     }
+// =========================================================
+// FORMATEAR FECHA Y HORA DE PERÚ
+// =========================================================
 
+function formatearFechaHora(fecha) {
+
+    if (!fecha) {
+        return "";
+    }
+
+    const fechaObj =
+        new Date(fecha);
+
+    if (isNaN(fechaObj.getTime())) {
+        return String(fecha);
+    }
+
+    return fechaObj.toLocaleString(
+        "es-PE",
+        {
+            timeZone: "America/Lima",
+
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+
+            hour12: false
+        }
+    );
+
+}
 
     // =========================================================
     // OBTENER SESIÓN
@@ -876,153 +910,338 @@
     );
 
 
-    async function registrarSalida() {
+    // =========================================================
+// REGISTRAR SALIDA
+// =========================================================
 
-        // =====================================================
-        // VALIDAR ESTUDIANTE
-        // =====================================================
+botonRegistrar.addEventListener(
+    "click",
+    registrarSalida
+);
 
-        if (!estudianteSeleccionado) {
 
-            alert(
-                "Seleccione un estudiante de la lista."
+async function registrarSalida() {
+
+    // =====================================================
+    // VALIDAR ESTUDIANTE
+    // =====================================================
+
+    if (!estudianteSeleccionado) {
+
+        alert(
+            "Seleccione un estudiante de la lista."
+        );
+
+        buscar.focus();
+
+        return;
+
+    }
+
+
+    // =====================================================
+    // VALIDAR MOTIVO
+    // =====================================================
+
+    if (!comboMotivo.value) {
+
+        alert(
+            "Seleccione un motivo."
+        );
+
+        comboMotivo.focus();
+
+        return;
+
+    }
+
+
+    try {
+
+        botonRegistrar.disabled =
+            true;
+
+
+        // =================================================
+        // OBTENER WORKSTATION
+        // =================================================
+
+        const workstation =
+            await obtenerWorkstation();
+
+
+        if (
+            !workstation ||
+            !workstation.id
+        ) {
+
+            throw new Error(
+                "No se encontró la workstation de esta computadora."
             );
 
+        }
 
-            buscar.focus();
 
+        console.log(
+            "WORKSTATION PARA REGISTRAR:",
+            workstation
+        );
+
+
+        // =================================================
+        // OBTENER SESIÓN
+        // =================================================
+
+        const sesion =
+            await obtenerSesion();
+
+
+        if (!sesion) {
+
+            alert(
+                "No existe una sesión activa."
+            );
 
             return;
 
         }
 
 
-        // =====================================================
-        // VALIDAR MOTIVO
-        // =====================================================
+        console.log(
+            "SESIÓN:",
+            sesion
+        );
 
-        if (!comboMotivo.value) {
 
-            alert(
-                "Seleccione un motivo."
+        // =================================================
+        // OBTENER ID DEL USUARIO
+        // =================================================
+        //
+        // La respuesta actual del servidor tiene:
+        //
+        // {
+        //     success: true,
+        //     session: {
+        //         id: "25",
+        //         usuario: "jquispe",
+        //         ...
+        //     }
+        // }
+        //
+        // Por eso usamos primero sesion.session.id.
+        // Dejamos sesion.id como compatibilidad.
+        // =================================================
+
+        const usuarioId =
+            sesion.session?.id ||
+            sesion.usuario_id ||
+            sesion.id;
+
+
+        if (!usuarioId) {
+
+            throw new Error(
+                "No se pudo obtener el ID del usuario de la sesión."
+            );
+
+        }
+
+
+        console.log(
+            "USUARIO ID PARA REGISTRAR:",
+            usuarioId
+        );
+
+
+        // =================================================
+        // CONSTRUIR SALIDA
+        // =================================================
+
+        const salida = {
+
+            estudiante_id:
+                estudianteSeleccionado.id,
+
+            motivo_id:
+                Number(
+                    comboMotivo.value
+                ),
+
+            workstation_id:
+                workstation.id,
+
+            usuario_id:
+                usuarioId,
+
+            observacion:
+                observacion
+                    ? observacion.value.trim()
+                    : "",
+
+            confirmarSalida:
+                false
+
+        };
+
+
+        console.log(
+            "SALIDA A REGISTRAR:",
+            salida
+        );
+
+
+        // =================================================
+        // PRIMER INTENTO
+        // =================================================
+
+        let respuestaHTTP =
+            await fetch(
+                "/api/salidas",
+                {
+
+                    method:
+                        "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify(
+                            salida
+                        )
+
+                }
             );
 
 
-            comboMotivo.focus();
-
-
-            return;
-
-        }
+        let respuesta;
 
 
         try {
 
-            botonRegistrar.disabled =
-                true;
+            respuesta =
+                await respuestaHTTP.json();
+
+        } catch (error) {
+
+            throw new Error(
+                `El servidor respondió con HTTP ${respuestaHTTP.status}, pero no devolvió JSON válido.`
+            );
+
+        }
 
 
-            // =================================================
-            // OBTENER WORKSTATION
-            // =================================================
-
-            const workstation =
-                await obtenerWorkstation();
+        console.log(
+            "RESPUESTA SERVIDOR:",
+            respuesta
+        );
 
 
-            if (
-                !workstation ||
-                !workstation.id
-            ) {
+        // =================================================
+        // VERIFICAR ERROR HTTP
+        // =================================================
 
-                throw new Error(
-                    "No se encontró la workstation de esta computadora."
+        if (!respuestaHTTP.ok) {
+
+            console.error(
+                "ERROR HTTP AL REGISTRAR:",
+                respuesta
+            );
+
+
+            throw new Error(
+                respuesta.message ||
+                respuesta.error ||
+                `Error del servidor: HTTP ${respuestaHTTP.status}`
+            );
+
+        }
+
+
+        // =================================================
+        // ERROR NORMAL
+        // =================================================
+
+        if (!respuesta) {
+
+            throw new Error(
+                "El servidor no devolvió respuesta."
+            );
+
+        }
+
+
+        // =================================================
+        // SALIDA FRECUENTE
+        // =================================================
+
+        if (
+            respuesta.requiereConfirmacion
+        ) {
+
+            const cantidad =
+                respuesta.cantidad ||
+                4;
+
+
+            const nombre =
+                `${estudianteSeleccionado.apellidos} ${estudianteSeleccionado.nombres}`;
+
+
+            const confirmar =
+                window.confirm(
+
+                    `SALIDA FRECUENTE\n\n` +
+
+                    `Estudiante:\n` +
+
+                    `${nombre}\n\n` +
+
+                    `Esta sería su ${cantidad}ª salida ` +
+
+                    `por este motivo durante el día.\n\n` +
+
+                    `¿Desea permitir la salida?`
+
                 );
 
-            }
 
+            if (!confirmar) {
 
-            // =================================================
-            // OBTENER SESIÓN
-            // =================================================
-
-            const sesion =
-                await obtenerSesion();
-
-
-            if (!sesion) {
-
-                alert(
-                    "No existe una sesión activa."
+                console.log(
+                    "Salida cancelada por el docente."
                 );
-
 
                 return;
 
             }
 
 
-            console.log(
-                "SESIÓN:",
-                sesion
-            );
-
-
             // =================================================
-            // CONSTRUIR SALIDA
+            // CONFIRMAR SALIDA
             // =================================================
 
-            const salida = {
-
-                estudiante_id:
-                    estudianteSeleccionado.id,
-
-
-                motivo_id:
-                    Number(
-                        comboMotivo.value
-                    ),
-
-
-                workstation_id:
-                    workstation.id,
-
-
-                usuario_id:
-                    sesion.usuario_id ||
-                    sesion.id,
-
-
-                observacion:
-                    observacion
-                        ? observacion.value.trim()
-                        : "",
-
-
-                confirmarSalida:
-                    false
-
-            };
+            salida.confirmarSalida =
+                true;
 
 
             console.log(
-                "SALIDA A REGISTRAR:",
+                "REGISTRANDO SALIDA CONFIRMADA:",
                 salida
             );
 
 
-            // =================================================
-            // PRIMER INTENTO
-            // =================================================
-
-            let respuestaHTTP =
+            respuestaHTTP =
                 await fetch(
-
                     "/api/salidas",
-
                     {
 
-                        method: "POST",
+                        method:
+                            "POST",
 
                         headers: {
 
@@ -1037,240 +1256,145 @@
                             )
 
                     }
-
                 );
 
 
-            let respuesta =
-                await respuestaHTTP.json();
+            try {
+
+                respuesta =
+                    await respuestaHTTP.json();
+
+            } catch (error) {
+
+                throw new Error(
+                    `El servidor respondió con HTTP ${respuestaHTTP.status}, pero no devolvió JSON válido.`
+                );
+
+            }
 
 
             console.log(
-                "RESPUESTA SERVIDOR:",
+                "RESPUESTA CONFIRMACIÓN:",
                 respuesta
             );
 
 
             // =================================================
-            // ERROR NORMAL
+            // VERIFICAR ERROR HTTP DE CONFIRMACIÓN
             // =================================================
 
-            if (
-                !respuesta
-            ) {
+            if (!respuestaHTTP.ok) {
 
                 throw new Error(
-                    "El servidor no devolvió respuesta."
-                );
-
-            }
-
-
-            // =================================================
-            // SALIDA FRECUENTE
-            // =================================================
-
-            if (
-                respuesta.requiereConfirmacion
-            ) {
-
-                const cantidad =
-                    respuesta.cantidad ||
-                    4;
-
-
-                const nombre =
-                    `${estudianteSeleccionado.apellidos} ${estudianteSeleccionado.nombres}`;
-
-
-                const confirmar =
-                    window.confirm(
-
-                        `SALIDA FRECUENTE\n\n` +
-
-                        `Estudiante:\n` +
-
-                        `${nombre}\n\n` +
-
-                        `Esta sería su ${cantidad}ª salida ` +
-
-                        `por este motivo durante el día.\n\n` +
-
-                        `¿Desea permitir la salida?`
-
-                    );
-
-
-                if (!confirmar) {
-
-                    console.log(
-                        "Salida cancelada por el docente."
-                    );
-
-
-                    return;
-
-                }
-
-
-                // =================================================
-                // CONFIRMAR SALIDA
-                // =================================================
-
-                salida.confirmarSalida =
-                    true;
-
-
-                console.log(
-                    "REGISTRANDO SALIDA CONFIRMADA:",
-                    salida
-                );
-
-
-                respuestaHTTP =
-                    await fetch(
-
-                        "/api/salidas",
-
-                        {
-
-                            method: "POST",
-
-                            headers: {
-
-                                "Content-Type":
-                                    "application/json"
-
-                            },
-
-                            body:
-                                JSON.stringify(
-                                    salida
-                                )
-
-                        }
-
-                    );
-
-
-                respuesta =
-                    await respuestaHTTP.json();
-
-
-                console.log(
-                    "RESPUESTA CONFIRMACIÓN:",
-                    respuesta
-                );
-
-            }
-
-
-            // =================================================
-            // VERIFICAR RESULTADO
-            // =================================================
-
-            if (
-                !respuesta.success
-            ) {
-
-                alert(
-
                     respuesta.message ||
-
                     respuesta.error ||
-
-                    "No se pudo registrar la salida."
-
+                    `Error del servidor: HTTP ${respuestaHTTP.status}`
                 );
 
-
-                return;
-
             }
-
-
-            // =================================================
-            // SALIDA REGISTRADA
-            // =================================================
-
-            console.log(
-                "Salida registrada correctamente."
-            );
-
-
-            // =================================================
-            // LIMPIAR FORMULARIO
-            // =================================================
-
-            buscar.value =
-                "";
-
-
-            comboMotivo.value =
-                "";
-
-
-            if (observacion) {
-
-                observacion.value =
-                    "";
-
-            }
-
-
-            estudianteSeleccionado =
-                null;
-
-
-            contenedorResultados.innerHTML =
-                "";
-
-
-            // =================================================
-            // ACTUALIZAR SALIDAS ACTIVAS
-            // =================================================
-
-            await cargarSalidas();
-
-
-            // =================================================
-            // DEVOLVER FOCO
-            // =================================================
-
-            setTimeout(
-                () => {
-
-                    buscar.focus();
-
-                },
-                100
-            );
-
-
-        } catch (error) {
-
-            console.error(
-                "Error registrando salida:",
-                error
-            );
-
-
-            alert(
-                error.message ||
-                "No se pudo registrar la salida."
-            );
-
-
-        } finally {
-
-            botonRegistrar.disabled =
-                false;
 
         }
 
+
+        // =================================================
+        // VERIFICAR RESULTADO
+        // =================================================
+
+        if (
+            !respuesta.success
+        ) {
+
+            alert(
+                respuesta.message ||
+                respuesta.error ||
+                "No se pudo registrar la salida."
+            );
+
+            return;
+
+        }
+
+
+        // =================================================
+        // SALIDA REGISTRADA
+        // =================================================
+
+        console.log(
+            "Salida registrada correctamente."
+        );
+
+
+        // =================================================
+        // LIMPIAR FORMULARIO
+        // =================================================
+
+        buscar.value =
+            "";
+
+
+        comboMotivo.value =
+            "";
+
+
+        if (observacion) {
+
+            observacion.value =
+                "";
+
+        }
+
+
+        estudianteSeleccionado =
+            null;
+
+
+        contenedorResultados.innerHTML =
+            "";
+
+
+        // =================================================
+        // ACTUALIZAR SALIDAS ACTIVAS
+        // =================================================
+
+        await cargarSalidas();
+
+
+        // =================================================
+        // DEVOLVER FOCO
+        // =================================================
+
+        setTimeout(
+            () => {
+
+                buscar.focus();
+
+            },
+            100
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Error registrando salida:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "No se pudo registrar la salida."
+        );
+
+
+    } finally {
+
+        botonRegistrar.disabled =
+            false;
+
     }
 
-
+}
     // =========================================================
     // CARGAR SALIDAS ACTIVAS
     // =========================================================
@@ -1409,14 +1533,13 @@
 
 
                             <div>
-
-                                Hora:
-
-                                ${escaparHTML(
-                                    salida.hora_salida
-                                )}
-
-                            </div>
+    Hora:
+    ${escaparHTML(
+        formatearFechaHora(
+            salida.hora_salida
+        )
+    )}
+</div>
 
 
                             <button
