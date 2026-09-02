@@ -332,44 +332,74 @@ console.log("Módulo Incidencias cargado.");
 
 
     // =========================================================
-    // OBTENER WORKSTATION
-    // =========================================================
+// OBTENER WORKSTATION DESDE LA SESIÓN
+// =========================================================
 
-    async function obtenerWorkstation() {
+async function obtenerWorkstation() {
 
-        console.log(
-            "INCIDENCIAS: Obteniendo workstation..."
+    console.log(
+        "INCIDENCIAS: Obteniendo workstation desde la sesión..."
+    );
+
+    const sessionId =
+        localStorage.getItem(
+            "sessionId"
         );
 
+    if (!sessionId) {
 
-        const respuesta =
-            await fetch(
-                "/api/workstation"
-            );
-
-
-        if (!respuesta.ok) {
-
-            throw new Error(
-                `Error obteniendo workstation: HTTP ${respuesta.status}`
-            );
-
-        }
-
-
-        const workstation =
-            await respuesta.json();
-
-
-        console.log(
-            "INCIDENCIAS - WORKSTATION:",
-            workstation
+        throw new Error(
+            "No existe una sesión activa."
         );
-
-
-        return workstation;
 
     }
+
+    const respuesta =
+        await fetch(
+            "/api/auth/session/" +
+            encodeURIComponent(sessionId)
+        );
+
+    if (!respuesta.ok) {
+
+        throw new Error(
+            `Error obteniendo sesión: HTTP ${respuesta.status}`
+        );
+
+    }
+
+    const datos =
+        await respuesta.json();
+
+    console.log(
+        "INCIDENCIAS - SESIÓN:",
+        datos
+    );
+
+    const workstation =
+        datos.session?.workstation ||
+        datos.workstation ||
+        null;
+
+    if (
+        !workstation ||
+        !workstation.id
+    ) {
+
+        throw new Error(
+            "La sesión no tiene una workstation asignada."
+        );
+
+    }
+
+    console.log(
+        "INCIDENCIAS - WORKSTATION:",
+        workstation
+    );
+
+    return workstation;
+
+}
 
 
     // =========================================================
