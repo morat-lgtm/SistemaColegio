@@ -128,11 +128,22 @@ contextBridge.exposeInMainWorld("electronAPI", {
     // REPORTES
     // ==========================
 
-    getReporteEstudiante: (estudianteId) =>
-        ipcRenderer.invoke(
-            "get-reporte-estudiante",
-            estudianteId
-        ),
+    // ==========================
+// REPORTES
+// ==========================
+
+getReporteEstudiante: (estudianteId) =>
+    ipcRenderer.invoke(
+        "get-reporte-estudiante",
+        estudianteId
+    ),
+
+
+getReporteIncidenciasEstudiante: (estudianteId) =>
+    ipcRenderer.invoke(
+        "get-reporte-incidencias-estudiante",
+        estudianteId
+    ),
 
 
 
@@ -256,7 +267,9 @@ console.log(
 console.log(
     "PRELOAD: getReporteEstudiante definida correctamente"
 );
-
+console.log(
+    "PRELOAD: getReporteIncidenciasEstudiante definida correctamente"
+);
 
 console.log(
     "PRELOAD: exportarPDF definida correctamente"

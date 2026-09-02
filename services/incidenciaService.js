@@ -1,5 +1,5 @@
 const incidenciaRepository =
-require("../repositories/incidenciaRepository");
+    require("../repositories/incidenciaRepository");
 
 
 
@@ -8,78 +8,76 @@ class IncidenciaService {
 
 
 
-// ==========================
-// OBTENER TIPOS DE INCIDENCIA
-// ==========================
+    // ==========================
+    // OBTENER TIPOS DE INCIDENCIA
+    // ==========================
 
-async getTiposIncidencia(){
+    async getTiposIncidencia() {
 
+        return await incidenciaRepository
+            .getTiposIncidencia();
 
-    return await incidenciaRepository
-    .getTiposIncidencia();
-
-
-}
+    }
 
 
 
 
+    // ==========================
+    // REGISTRAR INCIDENCIA
+    // ==========================
 
+    async registrarIncidencia(incidencia) {
 
+        return await incidenciaRepository
+            .registrarIncidencia(
+                incidencia
+            );
 
-// ==========================
-// REGISTRAR INCIDENCIA
-// ==========================
-
-async registrarIncidencia(incidencia){
-
-
-    return await incidenciaRepository
-    .registrarIncidencia(
-
-        incidencia
-
-    );
-
-
-}
+    }
 
 
 
 
+    // ==========================
+    // HISTORIAL DEL DÍA
+    // ==========================
+
+    async getIncidenciasHoy() {
+
+        return await incidenciaRepository
+            .getIncidenciasHoy();
+
+    }
 
 
 
-// ==========================
-// HISTORIAL DEL DÍA
-// ==========================
 
-async getIncidenciasHoy(){
+    // ==========================
+    // REPORTE POR ESTUDIANTE
+    // ==========================
 
+    async getIncidenciasByEstudiante(estudianteId) {
 
-    return await incidenciaRepository
-    .getIncidenciasHoy();
+        return await incidenciaRepository
+            .getIncidenciasByEstudiante(
+                estudianteId
+            );
 
-
-}
-// ==========================
-// REPORTE POR ESTUDIANTE
-// ==========================
-
-async getIncidenciasByEstudiante(estudianteId){
+    }
 
 
-    return await incidenciaRepository
-    .getIncidenciasByEstudiante(
-
-        estudianteId
-
-    );
 
 
-}
+    // ==========================
+    // RANKING DE INCIDENCIAS
+    // ==========================
 
+    async getRankingIncidencias() {
 
+        return await incidenciaRepository
+            .getRankingIncidencias();
+
+    }
 
 
 }
@@ -88,5 +86,4 @@ async getIncidenciasByEstudiante(estudianteId){
 
 
 module.exports =
-
-new IncidenciaService();
+    new IncidenciaService();

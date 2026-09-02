@@ -97,7 +97,8 @@ class IncidenciaRepository {
 
 
     // ==========================
-    // HISTORIAL DE INCIDENCIAS DEL DÍA
+    // HISTORIAL DE INCIDENCIAS
+    // DEL DÍA
     // ==========================
 
     async getIncidenciasHoy() {
@@ -153,7 +154,9 @@ class IncidenciaRepository {
 
 
                 WHERE
+
                     (i.fecha AT TIME ZONE 'America/Lima')::date =
+
                     (NOW() AT TIME ZONE 'America/Lima')::date
 
 
@@ -232,6 +235,75 @@ class IncidenciaRepository {
             [
                 estudianteId
             ]);
+
+
+        return result.rows;
+
+    }
+
+
+    // ==========================
+    // RANKING DE INCIDENCIAS
+    // ==========================
+
+    async getRankingIncidencias() {
+
+        const db =
+            databaseManager.getConnection();
+
+
+        const result =
+            await db.query(`
+
+                SELECT
+
+                    e.id,
+
+                    e.apellidos,
+
+                    e.nombres,
+
+                    e.grado,
+
+                    e.nivel,
+
+                    e.seccion,
+
+                    COUNT(i.id)::integer AS total_incidencias
+
+
+                FROM incidencias i
+
+
+                INNER JOIN estudiantes e
+
+                    ON e.id = i.estudiante_id
+
+
+                GROUP BY
+
+                    e.id,
+
+                    e.apellidos,
+
+                    e.nombres,
+
+                    e.grado,
+
+                    e.nivel,
+
+                    e.seccion
+
+
+                ORDER BY
+
+                    COUNT(i.id) DESC,
+
+                    e.apellidos ASC,
+
+                    e.nombres ASC
+
+            `);
 
 
         return result.rows;

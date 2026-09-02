@@ -1,0 +1,122 @@
+<div class="modulo">
+
+    <h1 class="titulo-modulo">
+        📊 Reporte de Incidencias
+    </h1>
+
+
+    <!-- ===================================================== -->
+    <!-- BUSCAR ESTUDIANTE -->
+    <!-- ===================================================== -->
+
+    <section class="card">
+
+        <h2>
+            👨‍🎓 Consultar estudiante
+        </h2>
+
+
+        <div class="campo">
+
+            <label for="txtBuscarReporteIncidencias">
+                Estudiante
+            </label>
+
+            <input
+                type="text"
+                id="txtBuscarReporteIncidencias"
+                placeholder="Escriba apellidos, nombres, código o DNI..."
+                autocomplete="off"
+            >
+
+        </div>
+
+
+        <div
+            id="listaEstudiantesReporteIncidencias"
+            class="resultado-estudiantes">
+        </div>
+
+
+        <div
+            id="estudianteSeleccionadoReporteIncidencias"
+            class="seleccionado">
+        </div>
+
+
+        <div class="acciones-reporte">
+
+            <button
+                id="btnConsultarReporteIncidencias"
+                class="btn-principal"
+                type="button">
+                🔎 Consultar
+            </button>
+
+
+            <button
+                id="btnExportarPDFReporteIncidencias"
+                class="btn-principal"
+                type="button"
+                disabled>
+                📄 Generar PDF
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ===================================================== -->
+    <!-- RESULTADO DEL ESTUDIANTE -->
+    <!-- ===================================================== -->
+
+    <section class="card">
+
+        <h2>
+            📋 Historial de incidencias
+        </h2>
+
+
+        <div id="resultadoReporteIncidencias">
+
+            <p>
+                Seleccione un estudiante para consultar
+                sus incidencias.
+            </p>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ===================================================== -->
+    <!-- RANKING GENERAL -->
+    <!-- ===================================================== -->
+
+    <section class="card">
+
+        <h2>
+            🏆 Ranking de estudiantes con más incidencias
+        </h2>
+
+
+        <p>
+            Estudiantes ordenados de mayor a menor
+            cantidad de incidencias registradas.
+        </p>
+
+
+        <div id="rankingIncidencias">
+
+            <p>
+                Cargando ranking...
+            </p>
+
+        </div>
+
+    </section>
+
+</div>

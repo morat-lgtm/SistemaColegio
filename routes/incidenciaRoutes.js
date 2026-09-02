@@ -120,17 +120,6 @@ router.post(
             // ==========================
             // DETERMINAR WORKSTATION
             // ==========================
-            //
-            // En Electron puede venir
-            // asociada a la sesión.
-            //
-            // En navegador llega desde
-            // /api/workstation.
-            //
-            // Incidencias NO utiliza
-            // ambiente_id para filtrar
-            // estudiantes.
-            // ==========================
 
             const workstationFinal =
                 workstation_id ||
@@ -171,12 +160,9 @@ router.post(
                 descripcion:
                     descripcion,
 
-                // USUARIO REAL DE LA SESIÓN
                 usuario_id:
                     sesion.id,
 
-                // COMPUTADORA DESDE DONDE
-                // SE REGISTRA LA INCIDENCIA
                 workstation_id:
                     workstationFinal
 
@@ -310,6 +296,10 @@ router.get(
 // ==========================
 // REPORTE POR ESTUDIANTE
 // ==========================
+//
+// Ruta que ya utilizaba
+// el módulo de incidencias.
+//
 
 router.get(
 
@@ -336,6 +326,106 @@ router.get(
         } catch (error) {
 
             console.error(error);
+
+
+            res.status(500).json({
+
+                error:
+                    error.message
+
+            });
+
+        }
+
+    }
+
+);
+
+
+// ==========================
+// REPORTE POR ESTUDIANTE
+// ALIAS PARA EL MÓDULO
+// REPORTE DE INCIDENCIAS
+// ==========================
+
+router.get(
+
+    "/reporte/estudiante/:id",
+
+    async (req, res) => {
+
+        try {
+
+            const resultado =
+                await incidenciaController
+                    .getIncidenciasByEstudiante(
+
+                        req.params.id
+
+                    );
+
+
+            res.json(
+                resultado
+            );
+
+
+        } catch (error) {
+
+            console.error(
+
+                "Error obteniendo reporte de incidencias:",
+
+                error
+
+            );
+
+
+            res.status(500).json({
+
+                error:
+                    error.message
+
+            });
+
+        }
+
+    }
+
+);
+
+
+// ==========================
+// RANKING DE INCIDENCIAS
+// ==========================
+
+router.get(
+
+    "/ranking",
+
+    async (req, res) => {
+
+        try {
+
+            const resultado =
+                await incidenciaController
+                    .getRankingIncidencias();
+
+
+            res.json(
+                resultado
+            );
+
+
+        } catch (error) {
+
+            console.error(
+
+                "Error obteniendo ranking de incidencias:",
+
+                error
+
+            );
 
 
             res.status(500).json({

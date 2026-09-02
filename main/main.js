@@ -858,7 +858,37 @@ ipcMain.handle(
     }
 );
 
+// ==========================
+// REPORTE DE INCIDENCIAS
+// POR ESTUDIANTE
+// ==========================
 
+ipcMain.handle(
+    "get-reporte-incidencias-estudiante",
+    async (
+        event,
+        estudianteId
+    ) => {
+
+        try {
+
+            return await apiClient.get(
+                `/api/incidencias/reporte/estudiante/${estudianteId}`
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Error obteniendo reporte de incidencias:",
+                error
+            );
+
+            throw error;
+
+        }
+
+    }
+);
 // ======================================================
 // WORKSTATION
 // ======================================================
