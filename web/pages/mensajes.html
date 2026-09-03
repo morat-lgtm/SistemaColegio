@@ -1,0 +1,540 @@
+<div class="mensajes-container">
+
+    <div class="mensajes-header">
+        <h2>Mensajes</h2>
+        <p>Envía y recibe mensajes dentro del sistema escolar.</p>
+    </div>
+
+    <!-- ============================= -->
+    <!-- NUEVO MENSAJE -->
+    <!-- ============================= -->
+
+    <div class="mensaje-card">
+
+        <h3>Nuevo mensaje</h3>
+
+        <div class="campo-mensaje">
+            <label for="buscarDestinatario">
+                Destinatario
+            </label>
+
+            <div class="autocomplete-container">
+
+                <input
+                    type="text"
+                    id="buscarDestinatario"
+                    placeholder="Buscar usuario por nombre o apellido..."
+                    autocomplete="off"
+                >
+
+                <input
+                    type="hidden"
+                    id="usuarioDestino"
+                >
+
+                <div
+                    id="listaUsuarios"
+                    class="lista-autocomplete"
+                ></div>
+
+            </div>
+
+            <div
+                id="destinatarioSeleccionado"
+                class="destinatario-seleccionado"
+            >
+                Ningún destinatario seleccionado.
+            </div>
+        </div>
+
+
+        <div class="campo-mensaje">
+
+            <label for="asuntoMensaje">
+                Asunto
+            </label>
+
+            <input
+                type="text"
+                id="asuntoMensaje"
+                placeholder="Escribe el asunto del mensaje"
+                maxlength="150"
+            >
+
+        </div>
+
+
+        <div class="campo-mensaje">
+
+            <label for="textoMensaje">
+                Mensaje
+            </label>
+
+            <textarea
+                id="textoMensaje"
+                rows="6"
+                placeholder="Escribe tu mensaje..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="acciones-mensaje">
+
+            <button
+                type="button"
+                id="btnEnviarMensaje"
+                class="btn-enviar-mensaje"
+            >
+                Enviar mensaje
+            </button>
+
+            <button
+                type="button"
+                id="btnLimpiarMensaje"
+                class="btn-limpiar-mensaje"
+            >
+                Limpiar
+            </button>
+
+        </div>
+
+
+        <div
+            id="resultadoMensaje"
+            class="resultado-mensaje"
+        ></div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- BANDEJAS -->
+    <!-- ============================= -->
+
+    <div class="mensaje-card">
+
+        <div class="mensajes-tabs">
+
+            <button
+                type="button"
+                id="btnBandejaEntrada"
+                class="tab-mensaje activa"
+            >
+                Bandeja de entrada
+            </button>
+
+            <button
+                type="button"
+                id="btnBandejaEnviados"
+                class="tab-mensaje"
+            >
+                Enviados
+            </button>
+
+        </div>
+
+
+        <div
+            id="listaMensajes"
+            class="lista-mensajes"
+        ></div>
+
+    </div>
+
+
+    <!-- ============================= -->
+    <!-- DETALLE DEL MENSAJE -->
+    <!-- ============================= -->
+
+    <div
+        id="detalleMensaje"
+        class="detalle-mensaje"
+        style="display:none;"
+    >
+
+        <div class="detalle-header">
+
+            <h3 id="detalleAsunto">
+                Mensaje
+            </h3>
+
+            <button
+                type="button"
+                id="btnCerrarDetalle"
+                class="btn-cerrar-detalle"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div class="detalle-datos">
+
+            <div>
+                <strong>De:</strong>
+                <span id="detalleOrigen"></span>
+            </div>
+
+            <div>
+                <strong>Para:</strong>
+                <span id="detalleDestino"></span>
+            </div>
+
+            <div>
+                <strong>Fecha:</strong>
+                <span id="detalleFecha"></span>
+            </div>
+
+        </div>
+
+
+        <div
+            id="detalleContenido"
+            class="detalle-contenido"
+        ></div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+.mensajes-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.mensajes-header {
+    margin-bottom: 20px;
+}
+
+.mensajes-header h2 {
+    margin: 0 0 5px 0;
+}
+
+.mensajes-header p {
+    margin: 0;
+    color: #666;
+}
+
+
+/* TARJETAS */
+
+.mensaje-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+
+/* CAMPOS */
+
+.campo-mensaje {
+    margin-bottom: 18px;
+}
+
+.campo-mensaje label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 7px;
+}
+
+.campo-mensaje input,
+.campo-mensaje textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.campo-mensaje textarea {
+    resize: vertical;
+}
+
+
+/* AUTOCOMPLETE */
+
+.autocomplete-container {
+    position: relative;
+}
+
+.lista-autocomplete {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 100%;
+    z-index: 1000;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.usuario-opcion {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+}
+
+.usuario-opcion:hover {
+    background: #f2f2f2;
+}
+
+.usuario-opcion-nombre {
+    font-weight: 600;
+}
+
+.usuario-opcion-rol {
+    font-size: 12px;
+    color: #777;
+    margin-top: 3px;
+}
+
+
+/* DESTINATARIO */
+
+.destinatario-seleccionado {
+    margin-top: 8px;
+    padding: 8px 10px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #666;
+}
+
+
+/* BOTONES */
+
+.acciones-mensaje {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-enviar-mensaje,
+.btn-limpiar-mensaje {
+    border: none;
+    border-radius: 6px;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-enviar-mensaje {
+    background: #1976d2;
+    color: white;
+}
+
+.btn-enviar-mensaje:hover {
+    background: #125ca1;
+}
+
+.btn-limpiar-mensaje {
+    background: #e0e0e0;
+    color: #333;
+}
+
+.btn-limpiar-mensaje:hover {
+    background: #ccc;
+}
+
+
+/* RESULTADO */
+
+.resultado-mensaje {
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+
+/* TABS */
+
+.mensajes-tabs {
+    display: flex;
+    gap: 5px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.tab-mensaje {
+    border: none;
+    background: transparent;
+    padding: 10px 15px;
+    cursor: pointer;
+    font-size: 14px;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-mensaje:hover {
+    background: #f5f5f5;
+}
+
+.tab-mensaje.activa {
+    font-weight: 600;
+    border-bottom-color: #1976d2;
+}
+
+
+/* LISTA DE MENSAJES */
+
+.lista-mensajes {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mensaje-item {
+    border: 1px solid #ddd;
+    border-radius: 7px;
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.mensaje-item:hover {
+    background: #f7f7f7;
+}
+
+.mensaje-item.no-leido {
+    border-left: 4px solid #d32f2f;
+    background: #fff8f8;
+}
+
+.mensaje-item-cabecera {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.mensaje-item-asunto {
+    font-weight: 600;
+}
+
+.mensaje-item-fecha {
+    color: #777;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.mensaje-item-persona {
+    margin-top: 5px;
+    font-size: 13px;
+    color: #555;
+}
+
+.mensaje-item-vista {
+    margin-top: 6px;
+    color: #666;
+    font-size: 13px;
+}
+
+.mensaje-no-leido {
+    display: inline-block;
+    margin-left: 6px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    background: #d32f2f;
+    color: white;
+    font-size: 10px;
+}
+
+
+/* DETALLE */
+
+.detalle-mensaje {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.detalle-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 12px;
+    margin-bottom: 15px;
+}
+
+.detalle-header h3 {
+    margin: 0;
+}
+
+.btn-cerrar-detalle {
+    border: none;
+    background: transparent;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.detalle-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.detalle-contenido {
+    white-space: pre-wrap;
+    line-height: 1.6;
+    border-top: 1px solid #eee;
+    padding-top: 15px;
+}
+
+
+/* SIN MENSAJES */
+
+.sin-mensajes {
+    padding: 30px;
+    text-align: center;
+    color: #777;
+}
+
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+
+    .mensajes-container {
+        padding: 10px;
+    }
+
+    .mensaje-card {
+        padding: 15px;
+    }
+
+    .mensajes-tabs {
+        flex-direction: column;
+    }
+
+    .tab-mensaje {
+        text-align: left;
+    }
+
+    .acciones-mensaje {
+        flex-direction: column;
+    }
+
+    .mensaje-item-cabecera {
+        flex-direction: column;
+    }
+
+}
+
+</style>

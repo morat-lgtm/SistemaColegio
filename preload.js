@@ -1,14 +1,11 @@
 const { contextBridge, ipcRenderer } = require("electron");
 
-
 console.log("=================================");
 console.log("PRELOAD CARGADO");
 console.log("ARCHIVO PRELOAD:", __filename);
 console.log("=================================");
 
-
 contextBridge.exposeInMainWorld("electronAPI", {
-
 
     // ==========================
     // ABRIR PRINCIPAL
@@ -18,8 +15,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
         ipcRenderer.send(
             "abrir-principal"
         ),
-
-
 
     // ==========================
     // LOGIN / SESIÓN
@@ -32,13 +27,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
             password
         ),
 
-
     getSession: () =>
         ipcRenderer.invoke(
             "get-session"
         ),
-
-
 
     // ==========================
     // WORKSTATIONS
@@ -49,12 +41,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
             "get-hostname"
         ),
 
-
     getAmbientes: () =>
         ipcRenderer.invoke(
             "get-ambientes"
         ),
-
 
     saveWorkstation: (ambienteId) =>
         ipcRenderer.invoke(
@@ -62,13 +52,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
             ambienteId
         ),
 
-
     getWorkstation: () =>
         ipcRenderer.invoke(
             "get-workstation"
         ),
-
-
 
     // ==========================
     // ESTUDIANTES
@@ -79,13 +66,10 @@ contextBridge.exposeInMainWorld("electronAPI", {
             "import-students"
         ),
 
-
     getStudents: () =>
         ipcRenderer.invoke(
             "get-students"
         ),
-
-
 
     // ==========================
     // BUSCAR ESTUDIANTES
@@ -97,14 +81,11 @@ contextBridge.exposeInMainWorld("electronAPI", {
             texto
         ),
 
-
     getStudentsByAmbiente: (ambienteId) =>
         ipcRenderer.invoke(
             "get-students-by-ambiente",
             ambienteId
         ),
-
-
 
     // ==========================
     // INCIDENCIAS
@@ -115,37 +96,27 @@ contextBridge.exposeInMainWorld("electronAPI", {
             "get-tipos-incidencia"
         ),
 
-
     registrarIncidencia: (incidencia) =>
         ipcRenderer.invoke(
             "registrar-incidencia",
             incidencia
         ),
 
-
-
     // ==========================
     // REPORTES
     // ==========================
 
-    // ==========================
-// REPORTES
-// ==========================
+    getReporteEstudiante: (estudianteId) =>
+        ipcRenderer.invoke(
+            "get-reporte-estudiante",
+            estudianteId
+        ),
 
-getReporteEstudiante: (estudianteId) =>
-    ipcRenderer.invoke(
-        "get-reporte-estudiante",
-        estudianteId
-    ),
-
-
-getReporteIncidenciasEstudiante: (estudianteId) =>
-    ipcRenderer.invoke(
-        "get-reporte-incidencias-estudiante",
-        estudianteId
-    ),
-
-
+    getReporteIncidenciasEstudiante: (estudianteId) =>
+        ipcRenderer.invoke(
+            "get-reporte-incidencias-estudiante",
+            estudianteId
+        ),
 
     // ==========================
     // EXPORTAR PDF
@@ -157,8 +128,6 @@ getReporteIncidenciasEstudiante: (estudianteId) =>
             html
         ),
 
-
-
     // ==========================
     // SALIDAS
     // ==========================
@@ -169,20 +138,16 @@ getReporteIncidenciasEstudiante: (estudianteId) =>
             salida
         ),
 
-
     getSalidasActivas: () =>
         ipcRenderer.invoke(
             "get-salidas-activas"
         ),
-
 
     registrarRetorno: (id) =>
         ipcRenderer.invoke(
             "registrar-retorno",
             id
         ),
-
-
 
     // ==========================
     // HISTORIAL DE SALIDAS
@@ -193,14 +158,11 @@ getReporteIncidenciasEstudiante: (estudianteId) =>
             "get-historial-salidas"
         ),
 
-
     getHistorialSalidasByAmbiente: (ambienteId) =>
         ipcRenderer.invoke(
             "get-historial-salidas-by-ambiente",
             ambienteId
         ),
-
-
 
     // ==========================
     // MOTIVOS DE SALIDA
@@ -210,8 +172,6 @@ getReporteIncidenciasEstudiante: (estudianteId) =>
         ipcRenderer.invoke(
             "get-motivos-salida"
         ),
-
-
 
     // ==========================
     // MENSAJES INTERNOS
@@ -223,21 +183,24 @@ getReporteIncidenciasEstudiante: (estudianteId) =>
             mensaje
         ),
 
-
     getMensajes: (usuarioId) =>
         ipcRenderer.invoke(
             "get-mensajes",
             usuarioId
         ),
 
-
-    marcarMensajeLeido: (id) =>
+    getMensajesNoLeidos: (usuarioId) =>
         ipcRenderer.invoke(
-            "marcar-mensaje-leido",
-            id
+            "get-mensajes-no-leidos",
+            usuarioId
         ),
 
-
+    marcarMensajeLeido: (id, usuarioId) =>
+        ipcRenderer.invoke(
+            "marcar-mensaje-leido",
+            id,
+            usuarioId
+        ),
 
     // ==========================
     // USUARIOS
@@ -247,26 +210,20 @@ getReporteIncidenciasEstudiante: (estudianteId) =>
         ipcRenderer.invoke(
             "get-usuarios"
         )
-
-
-
 });
-
-
 
 console.log(
     "PRELOAD: getHistorialSalidas definida correctamente"
 );
 
-
 console.log(
     "PRELOAD: buscarEstudiantes definida correctamente"
 );
 
-
 console.log(
     "PRELOAD: getReporteEstudiante definida correctamente"
 );
+
 console.log(
     "PRELOAD: getReporteIncidenciasEstudiante definida correctamente"
 );
@@ -275,12 +232,30 @@ console.log(
     "PRELOAD: exportarPDF definida correctamente"
 );
 
-
 console.log(
     "PRELOAD: getTiposIncidencia definida correctamente"
 );
 
-
 console.log(
     "PRELOAD: registrarIncidencia definida correctamente"
+);
+
+console.log(
+    "PRELOAD: getUsuarios definida correctamente"
+);
+
+console.log(
+    "PRELOAD: registrarMensaje definida correctamente"
+);
+
+console.log(
+    "PRELOAD: getMensajes definida correctamente"
+);
+
+console.log(
+    "PRELOAD: getMensajesNoLeidos definida correctamente"
+);
+
+console.log(
+    "PRELOAD: marcarMensajeLeido definida correctamente"
 );

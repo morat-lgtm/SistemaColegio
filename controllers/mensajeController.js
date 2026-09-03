@@ -1,51 +1,77 @@
-const mensajeService = require("../services/mensajeService");
+const mensajeService =
+    require("../services/mensajeService");
 
 
 class MensajeController {
 
 
-// ==========================
-// REGISTRAR MENSAJE
-// ==========================
+    // ==========================
+    // REGISTRAR
+    // ==========================
 
-registrarMensaje(mensaje) {
+    async registrarMensaje(
+        mensaje
+    ) {
+
+        return await mensajeService
+            .registrarMensaje(
+                mensaje
+            );
+
+    }
 
 
-    return mensajeService.registrarMensaje(mensaje);
+    // ==========================
+    // OBTENER MENSAJES
+    // ==========================
 
+    async getMensajes(
+        usuarioId
+    ) {
+
+        return await mensajeService
+            .getMensajes(
+                usuarioId
+            );
+
+    }
+
+
+    // ==========================
+    // NO LEÍDOS
+    // ==========================
+
+    async getMensajesNoLeidos(
+        usuarioId
+    ) {
+
+        return await mensajeService
+            .getMensajesNoLeidos(
+                usuarioId
+            );
+
+    }
+
+
+    // ==========================
+    // MARCAR LEÍDO
+    // ==========================
+
+    async marcarLeido(
+        id,
+        usuarioId
+    ) {
+
+        return await mensajeService
+            .marcarLeido(
+                id,
+                usuarioId
+            );
+
+    }
 
 }
 
 
-
-// ==========================
-// OBTENER MENSAJES
-// ==========================
-
-getMensajes(usuarioId) {
-
-
-    return mensajeService.getMensajes(usuarioId);
-
-
-}
-
-
-
-// ==========================
-// MARCAR LEÍDO
-// ==========================
-
-marcarLeido(id) {
-
-
-    return mensajeService.marcarLeido(id);
-
-
-}
-
-
-}
-
-
-module.exports = new MensajeController();
+module.exports =
+    new MensajeController();

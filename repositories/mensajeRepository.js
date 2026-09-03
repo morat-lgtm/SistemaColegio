@@ -18,24 +18,31 @@ class MensajeRepository {
         const sql = `
 
             INSERT INTO mensajes
-
             (
                 usuario_origen,
                 usuario_destino,
                 asunto,
-                mensaje
+                mensaje,
+                estado
             )
 
             VALUES
-
             (
                 $1,
                 $2,
                 $3,
-                $4
+                $4,
+                'PENDIENTE'
             )
 
-            RETURNING id
+            RETURNING
+                id,
+                usuario_origen,
+                usuario_destino,
+                asunto,
+                mensaje,
+                estado,
+                fecha
 
         `;
 
@@ -52,11 +59,7 @@ class MensajeRepository {
             );
 
 
-        return {
-
-            id: result.rows[0].id
-
-        };
+        return result.rows[0];
 
     }
 
@@ -77,6 +80,10 @@ class MensajeRepository {
 
                 m.id,
 
+                m.usuario_origen,
+
+                m.usuario_destino,
+
                 m.asunto,
 
                 m.mensaje,
@@ -85,15 +92,32 @@ class MensajeRepository {
 
                 m.fecha,
 
-                u.nombres || ' ' || u.apellidos AS origen
+
+                uOrigen.nombres ||
+                ' ' ||
+                uOrigen.apellidos
+                AS origen,
+
+
+                uDestino.nombres ||
+                ' ' ||
+                uDestino.apellidos
+                AS destino
 
 
             FROM mensajes m
 
 
-            INNER JOIN usuarios u
+            LEFT JOIN usuarios uOrigen
 
-                ON u.id = m.usuario_origen
+                ON uOrigen.id =
+                   m.usuario_origen
+
+
+            LEFT JOIN usuarios uDestino
+
+                ON uDestino.id =
+                   m.usuario_destino
 
 
             WHERE
@@ -102,10 +126,15 @@ class MensajeRepository {
 
                 OR
 
+                m.usuario_origen = $1
+
+                OR
+
                 m.usuario_destino IS NULL
 
 
-            ORDER BY m.fecha DESC
+            ORDER BY
+                m.fecha DESC
 
         `;
 
@@ -123,10 +152,55 @@ class MensajeRepository {
 
 
     // ==========================
-    // MARCAR COMO LEÍDO
+    // MENSAJES NO LEÍDOS
     // ==========================
 
-    async marcarLeido(id) {
+    async getMensajesNoLeidos(usuarioId) {
+
+        const db =
+            databaseManager.getConnection();
+
+
+        const sql = `
+
+            SELECT
+
+                COUNT(*)::integer
+                AS cantidad
+
+            FROM mensajes
+
+            WHERE
+
+                usuario_destino = $1
+
+                AND
+
+                estado = 'PENDIENTE'
+
+        `;
+
+
+        const result =
+            await db.query(
+                sql,
+                [usuarioId]
+            );
+
+
+        return result.rows[0].cantidad;
+
+    }
+
+
+    // ==========================
+    // MARCAR MENSAJE COMO LEÍDO
+    // ==========================
+
+    async marcarLeido(
+        id,
+        usuarioId
+    ) {
 
         const db =
             databaseManager.getConnection();
@@ -138,7 +212,15 @@ class MensajeRepository {
 
             SET estado = 'LEIDO'
 
-            WHERE id = $1
+            WHERE
+
+                id = $1
+
+                AND
+
+                usuario_destino = $2
+
+            RETURNING id
 
         `;
 
@@ -146,18 +228,24 @@ class MensajeRepository {
         const result =
             await db.query(
                 sql,
-                [id]
+                [
+                    id,
+                    usuarioId
+                ]
             );
 
 
         return {
 
-            cambios: result.rowCount
+            cambios:
+                result.rowCount,
+
+            id:
+                result.rows[0]?.id || null
 
         };
 
     }
-
 
 }
 

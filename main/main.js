@@ -6,6 +6,13 @@ const {
 } = require("electron");
 
 const path = require("path");
+console.log("=================================");
+console.log("MAIN __dirname:", __dirname);
+console.log(
+    "PRELOAD REAL:",
+    path.resolve(__dirname, "../preload.js")
+);
+console.log("=================================");
 const fs = require("fs");
 
 
@@ -96,12 +103,30 @@ function crearLogin() {
 
 
 
+// ======================================================
+// CREAR PRINCIPAL
+// ======================================================
 
 // ======================================================
 // CREAR PRINCIPAL
 // ======================================================
 
 function crearPrincipal() {
+
+    const preloadPath = path.resolve(
+        __dirname,
+        "../preload.js"
+    );
+
+    console.log("=================================");
+    console.log("CREANDO VENTANA PRINCIPAL");
+    console.log("MAIN __dirname:", __dirname);
+    console.log("PRELOAD PATH:", preloadPath);
+    console.log(
+        "PRELOAD EXISTE:",
+        fs.existsSync(preloadPath)
+    );
+    console.log("=================================");
 
     principalWindow = new BrowserWindow({
 
@@ -113,10 +138,7 @@ function crearPrincipal() {
 
         webPreferences: {
 
-            preload: path.join(
-                __dirname,
-                "../preload.js"
-            ),
+            preload: preloadPath,
 
             contextIsolation: true,
 
@@ -126,6 +148,37 @@ function crearPrincipal() {
 
     });
 
+    principalWindow.webContents.on(
+        "preload-error",
+        (
+            event,
+            preloadPath,
+            error
+        ) => {
+
+            console.error(
+                "================================="
+            );
+
+            console.error(
+                "ERROR CARGANDO PRELOAD"
+            );
+
+            console.error(
+                "PRELOAD:",
+                preloadPath
+            );
+
+            console.error(
+                "ERROR:",
+                error
+            );
+
+            console.error(
+                "================================="
+            );
+        }
+    );
 
     principalWindow.loadFile(
         path.join(
@@ -133,12 +186,7 @@ function crearPrincipal() {
             "../views/principal.html"
         )
     );
-
 }
-
-
-
-
 
 // ======================================================
 // CONFIGURAR EQUIPO
@@ -964,7 +1012,9 @@ ipcMain.handle(
 // ======================================================
 
 
+// ======================================================
 // REGISTRAR MENSAJE
+// ======================================================
 
 ipcMain.handle(
     "registrar-mensaje",
@@ -973,18 +1023,37 @@ ipcMain.handle(
         mensaje
     ) => {
 
-        return await mensajeController.registrarMensaje(
-            mensaje
-        );
+        try {
+
+            console.log(
+                "MAIN: Registrando mensaje:",
+                mensaje
+            );
+
+
+            return await mensajeController.registrarMensaje(
+                mensaje
+            );
+
+        } catch (error) {
+
+            console.error(
+                "MAIN: Error registrando mensaje:",
+                error
+            );
+
+            throw error;
+
+        }
 
     }
 );
 
 
 
-
-
+// ======================================================
 // OBTENER MENSAJES
+// ======================================================
 
 ipcMain.handle(
     "get-mensajes",
@@ -993,34 +1062,114 @@ ipcMain.handle(
         usuarioId
     ) => {
 
-        return await mensajeController.getMensajes(
-            usuarioId
-        );
+        try {
+
+            console.log(
+                "MAIN: Obteniendo mensajes del usuario:",
+                usuarioId
+            );
+
+
+            return await mensajeController.getMensajes(
+                usuarioId
+            );
+
+        } catch (error) {
+
+            console.error(
+                "MAIN: Error obteniendo mensajes:",
+                error
+            );
+
+            throw error;
+
+        }
 
     }
 );
 
 
 
+// ======================================================
+// OBTENER MENSAJES NO LEÍDOS
+// ======================================================
+
+ipcMain.handle(
+    "get-mensajes-no-leidos",
+    async (
+        event,
+        usuarioId
+    ) => {
+
+        try {
+
+            console.log(
+                "MAIN: Consultando mensajes no leídos:",
+                usuarioId
+            );
 
 
-// MARCAR MENSAJE LEÍDO
+            return await mensajeController.getMensajesNoLeidos(
+                usuarioId
+            );
+
+        } catch (error) {
+
+            console.error(
+                "MAIN: Error obteniendo mensajes no leídos:",
+                error
+            );
+
+            throw error;
+
+        }
+
+    }
+);
+
+
+
+// ======================================================
+// MARCAR MENSAJE COMO LEÍDO
+// ======================================================
 
 ipcMain.handle(
     "marcar-mensaje-leido",
     async (
         event,
-        id
+        id,
+        usuarioId
     ) => {
 
-        return await mensajeController.marcarLeido(
-            id
-        );
+        try {
+
+            console.log(
+                "MAIN: Marcando mensaje como leído:",
+                {
+                    id,
+                    usuarioId
+                }
+            );
+
+
+            return await mensajeController.marcarLeido(
+                id,
+                usuarioId
+            );
+
+        } catch (error) {
+
+            console.error(
+                "MAIN: Error marcando mensaje como leído:",
+                error
+            );
+
+            throw error;
+
+        }
 
     }
 );
-
-
 
 
 
@@ -1032,14 +1181,38 @@ ipcMain.handle(
     "get-usuarios",
     async () => {
 
-        return await userController.getUsuarios();
+        try {
+
+            console.log(
+                "MAIN: Obteniendo usuarios..."
+            );
+
+
+            const usuarios =
+                await userController.getUsuarios();
+
+
+            console.log(
+                "MAIN: Usuarios encontrados:",
+                usuarios.length
+            );
+
+
+            return usuarios;
+
+        } catch (error) {
+
+            console.error(
+                "MAIN: Error obteniendo usuarios:",
+                error
+            );
+
+            throw error;
+
+        }
 
     }
 );
-
-
-
-
 
 // ======================================================
 // IMPORTAR ESTUDIANTES

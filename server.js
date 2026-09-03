@@ -34,6 +34,12 @@ const reporteRoutes =
 const incidenciaRoutes =
     require("./routes/incidenciaRoutes");
 
+const mensajeRoutes =
+    require("./routes/mensajeRoutes");
+
+const userController =
+    require("./controllers/userController");
+
 
 // ==========================
 // COMPROBAR RUTAS
@@ -77,6 +83,16 @@ console.log(
 console.log(
     "incidenciaRoutes:",
     typeof incidenciaRoutes
+);
+
+console.log(
+    "mensajeRoutes:",
+    typeof mensajeRoutes
+);
+
+console.log(
+    "userController:",
+    typeof userController
 );
 
 
@@ -211,6 +227,70 @@ console.log(
 app.use(
     "/api/incidencias",
     incidenciaRoutes
+);
+
+
+// ==========================
+// USUARIOS
+// ==========================
+
+console.log(
+    "Cargando /api/usuarios..."
+);
+
+app.get(
+    "/api/usuarios",
+    async (req, res) => {
+
+        try {
+
+            console.log(
+                "API: Obteniendo usuarios..."
+            );
+
+            const usuarios =
+                await userController
+                    .getUsuarios();
+
+            console.log(
+                "API: Usuarios encontrados:",
+                usuarios.length
+            );
+
+            res.json(
+                usuarios
+            );
+
+        }
+        catch (error) {
+
+            console.error(
+                "API: Error obteniendo usuarios:",
+                error
+            );
+
+            res.status(500).json({
+
+                success: false,
+
+                message:
+                    "Error obteniendo usuarios."
+
+            });
+
+        }
+
+    }
+);
+
+
+console.log(
+    "Cargando /api/mensajes..."
+);
+
+app.use(
+    "/api/mensajes",
+    mensajeRoutes
 );
 
 

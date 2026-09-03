@@ -1,71 +1,101 @@
-const mensajeRepository = require("../repositories/mensajeRepository");
+const mensajeRepository =
+    require("../repositories/mensajeRepository");
 
 
 class MensajeService {
 
 
-// ==========================
-// REGISTRAR MENSAJE
-// ==========================
+    // ==========================
+    // REGISTRAR MENSAJE
+    // ==========================
 
-registrarMensaje(mensaje) {
+    async registrarMensaje(mensaje) {
+
+        const resultado =
+            await mensajeRepository
+                .registrarMensaje(
+                    mensaje
+                );
 
 
-    mensajeRepository.registrarMensaje(mensaje);
+        return {
+
+            success: true,
+
+            message:
+                "Mensaje enviado correctamente.",
+
+            mensaje:
+                resultado
+
+        };
+
+    }
 
 
+    // ==========================
+    // OBTENER MENSAJES
+    // ==========================
 
-    return {
+    async getMensajes(usuarioId) {
 
-        success:true,
+        return await mensajeRepository
+            .getMensajes(
+                usuarioId
+            );
 
-        message:"Mensaje enviado correctamente."
+    }
 
-    };
 
+    // ==========================
+    // OBTENER NO LEÍDOS
+    // ==========================
+
+    async getMensajesNoLeidos(
+        usuarioId
+    ) {
+
+        return await mensajeRepository
+            .getMensajesNoLeidos(
+                usuarioId
+            );
+
+    }
+
+
+    // ==========================
+    // MARCAR LEÍDO
+    // ==========================
+
+    async marcarLeido(
+        id,
+        usuarioId
+    ) {
+
+        const resultado =
+            await mensajeRepository
+                .marcarLeido(
+                    id,
+                    usuarioId
+                );
+
+
+        return {
+
+            success: true,
+
+            message:
+                "Mensaje marcado como leído.",
+
+            cambios:
+                resultado.cambios
+
+        };
+
+    }
 
 }
 
 
-
-// ==========================
-// OBTENER MENSAJES
-// ==========================
-
-getMensajes(usuarioId) {
-
-
-    return mensajeRepository.getMensajes(usuarioId);
-
-
-}
-
-
-
-// ==========================
-// MARCAR LEÍDO
-// ==========================
-
-marcarLeido(id) {
-
-
-    mensajeRepository.marcarLeido(id);
-
-
-
-    return {
-
-        success:true,
-
-        message:"Mensaje marcado como leído."
-
-    };
-
-
-}
-
-
-}
-
-
-module.exports = new MensajeService();
+module.exports =
+    new MensajeService();
